@@ -30,7 +30,7 @@ dispstat('init');
 for i = 1:size(maxCorrCoefByRow, 1)
     dispstat('Row: %d', i);
     % WARNING: size is hardcoded here and in generateDictionary.m
-    perfParamIndexArray(i, 2:4) = ind2sub([100, 100, 100], ...
+    perfParamIndexArray(i, 2:4) = ind2sub([50, 50, 50], ...
         perfParamIdx(i));
     perfParamIndexArray(i, 1) = maxCorrCoefByRow(i);
 end

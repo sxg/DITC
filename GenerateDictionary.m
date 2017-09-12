@@ -48,9 +48,9 @@ tauP = delayTime;
 
 % Ranges for perfusion parameters
 % t = linspace(0, length(times), length(times) + 1);
-k1aRange = linspace(0.01, 1, 100);
-k1pRange = linspace(0.01, 1, 100);
-k2Range = linspace(0.01, 1, 100);
+k1aRange = linspace(0.01, 1, 50);
+k1pRange = linspace(0.01, 1, 50);
+k2Range = linspace(0.01, 1, 50);
 
 dispstat('', 'init');
 D = zeros(length(times), length(k1aRange) * length(k1pRange) * length(k2Range));
