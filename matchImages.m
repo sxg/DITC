@@ -1,4 +1,4 @@
-function [ perfParamIndexImages ] = matchImages( images, dict )
+function [ perfParamIndexImages ] = matchImages( images, mask, dict )
 %matchImages Finds the best perfusion curve in the dictionary for each
 %voxel in images.
 %   
@@ -9,8 +9,12 @@ if size(images, 4) ~= size(dict, 1)
         'dict (%d rows)'], size(images, 4), size(dict, 1));
 end
 
+% Mask images
+maskedImages = repmat(mask, [1, 1, 1, size(images, 4)]) .* images;
+
 % Unroll images into a 2D matrix for matrix multiplication
-unrolledImages = unroll(images, 4);
+unrolledImages = unroll(maskedImages, 4);
+unrolledImages(~any(unrolledImages, 2), :) = [];
 
 % Normalized dot product with mean centering
 corrCoefArray = normr(unrolledImages - mean(unrolledImages)) * ...
@@ -33,8 +37,8 @@ end
 dispstat('Done.', 'keepprev');
 
 % Roll the index array back into the image shape
-perfParamIndexImages = roll(perfParamIndexArray, size(images, 1), ...
-    size(images, 2), size(images, 3), 4);
+% perfParamIndexImages = roll(perfParamIndexArray, size(images, 1), ...
+%     size(images, 2), size(images, 3), 4);
 
 end
 
