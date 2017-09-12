@@ -1,8 +1,7 @@
 function [ D ] = generateDictionary( times, AF, PV, Liver, alpha, TR, baseFrame, frames )
 %generateDictionary Generates a dictionary of perfusion parameters
 %   generateDictionary generates a 2D matrix of all possible perfusion
-%   curves made by all combinations of perfusion parameters. Inputs are
-%   specific to each data set.
+%   curves made by all combinati
 
 % Constants
 %   T10 values are in milliseconds
