@@ -47,23 +47,38 @@ tauA = delayTime;
 tauP = delayTime;
 
 % Ranges for perfusion parameters
-% t = linspace(0, length(times), length(times) + 1);
-k1aRange = linspace(0.01, 1, 50);
-k1pRange = linspace(0.01, 1, 50);
-k2Range = linspace(0.01, 1, 50);
+AF_range = linspace(0, 1, 101);
+DV_range = linspace(0, 1, 6);
+MTT_range = linspace(1, 100, 100);
+% t1_range = linspace(0, 0.02, 21); % t1 redefined as tauA
+% t2_range = linspace(0, 0.02, 21); % t2 redefined as tauP
+
+%times = times(startpoint:end);
+%Cb_plasma = Cb_plasma(startpoint:end);
+%Cp_plasma = Cp_plasma(startpoint:end);
 
 dispstat('', 'init');
-D = zeros(length(times), length(k1aRange) * length(k1pRange) * length(k2Range));
-for ik1a = 1:length(k1aRange)
-    for ik1p = 1:length(k1pRange)
-        for ik2 = 1:length(k2Range)
-            dispstat(sprintf('%d %d %d', ik1a, ik1p, ik2));
-            idx = sub2ind([length(k1aRange), length(k1pRange), length(k2Range)], ik1a, ik1p, ik2);
-            D(:, idx) = DISC(times, Cb_plasma, Cp_plasma, k1aRange(ik1a), k1pRange(ik1p), k2Range(ik2), tauA, tauP);
+D = zeros(length(times), length(AF_range) * length(DV_range) * length(MTT_range));
+for i_AF = 1:length(AF_range)
+    for i_DV = 1:length(DV_range)
+        for i_MTT = 1:length(MTT_range)
+            dispstat(sprintf('%d %d %d', i_AF, i_DV, i_MTT));
+            idx = sub2ind([length(AF_range), length(DV_range), length(MTT_range)], i_AF, i_DV, i_MTT);
+            D(:, idx) = DISC(times, Cb_plasma, Cp_plasma, AF_range(i_AF), DV_range(i_DV), MTT_range(i_MTT), tauA, tauP);
         end
     end
 end
 dispstat('Done.', 'keepprev');
+
+% Explicitly populate the dictionary with the perfusion parameters fitted
+% by the least squares method
+% D(:, 1) = DISC(times, Cb_plasma, Cp_plasma, 0.4145, 0.1711, 4.7196, 0.0034, 0.0028);
+
+% Data from the unnormalized dictionary appears to be more accurate
+% D = normc(D);
+
+% Convert the 6 dimensional, non-normalized dictionary to 2 dimensions
+% D = D_spread(:, :);
 
 end
 
