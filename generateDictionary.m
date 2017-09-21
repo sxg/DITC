@@ -45,10 +45,13 @@ timePerFrame = times(2) - times(1);
 delayTime = delayFrames * timePerFrame;
 tauA = delayTime;
 tauP = delayTime;
+% Manually setting tauA and tauP
+tauA = 0.0034;
+tauP = 0.0034;
 
 % Ranges for perfusion parameters
 AF_range = linspace(0, 1, 101);
-DV_range = linspace(0, 1, 6);
+DV_range = linspace(0, 1, 21);
 MTT_range = linspace(1, 100, 100);
 % t1_range = linspace(0, 0.02, 21); % t1 redefined as tauA
 % t2_range = linspace(0, 0.02, 21); % t2 redefined as tauP
