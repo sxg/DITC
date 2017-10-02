@@ -1,5 +1,5 @@
-function [y, i] = firstSignificantValue(x)
-%firstSignificantValue First significant non-zero value in a vector.
+function [y, i] = firstSignificant(x)
+%firstSignificant First significant non-zero value in a vector.
 
 % Input Validation
 validateattributes(x, {'numeric'}, {'vector'});
