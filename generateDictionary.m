@@ -1,4 +1,4 @@
-function [ D ] = generateDictionary( times, AF, PV, Liver, alpha, TR, baseFrame, frames )
+function [ D ] = generateDictionary( times, AF, PV, alpha, TR, baseFrame, frames )
 %generateDictionary Generates a dictionary of perfusion parameters
 %   generateDictionary generates a 2D matrix of all possible perfusion
 %   curves made by all combinations of perfusion parameters. Inputs are
@@ -10,7 +10,7 @@ alpha = alpha * pi / 180;
 T10b = 1.664 * 1000;
 T10p = 1.584 * 1000;
 T10L = 0.8 * 1000;
-R10b = 1/T10b; 
+R10b = 1/T10b;
 R10p = 1/T10p;
 R10L = 1/T10L;
 Hct = 0.4;
@@ -34,10 +34,10 @@ Cp_plasma = Cp_artery / (1 - Hct); % Concentration in plasma of portal vein (mM)
 Cp_plasma(1:baseFrame) = 0;
 
 % CL calculation
-S0L = mean(Liver(baseFrame:baseFrame+frames)) * (1 - exp(-R10L * TR) * cos(alpha)) / (1 - exp(-R10L * TR)) / sin(alpha); %GE equation
-R1L = abs(log((S0L * sin(alpha) - Liver .* cos(alpha)) ./ (S0L * sin(alpha) - Liver)) / TR);
-CL = (R1L - R10L) * 1e3 / relaxivity; % Concentration in liver
-% CL = CL * 0.2627; %0.2627 = 0.22/mean(CL(end-5:end)); normalize the liver SI
+% S0L = mean(Liver(baseFrame:baseFrame+frames)) * (1 - exp(-R10L * TR) * cos(alpha)) / (1 - exp(-R10L * TR)) / sin(alpha); %GE equation
+% R1L = abs(log((S0L * sin(alpha) - Liver .* cos(alpha)) ./ (S0L * sin(alpha) - Liver)) / TR);
+% CL = (R1L - R10L) * 1e3 / relaxivity; % Concentration in liver
+% % CL = CL * 0.2627; %0.2627 = 0.22/mean(CL(end-5:end)); normalize the liver SI
 
 % Tau calculation
 delayFrames = abs(find(Cb_plasma ~= 0, 1) - find(CL ~= 0, 1));
@@ -45,9 +45,6 @@ timePerFrame = times(2) - times(1);
 delayTime = delayFrames * timePerFrame;
 tauA = delayTime;
 tauP = delayTime;
-% Manually setting tauA and tauP
-tauA = 0.0034;
-tauP = 0.0034;
 
 % Ranges for perfusion parameters
 AF_range = linspace(0, 1, 101);
