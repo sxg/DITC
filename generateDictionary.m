@@ -41,7 +41,7 @@ Cp_plasma(1:baseFrame) = 0;
 
 %% Tau calculation
 % Find the first outlier, and consider it the first non-zero value
-delayFrames = abs(firstOutlier(diff(Cb_plasma)) - firstOutlier(diff(Cp_plasma)));
+delayFrames = abs(firstSignificantValue(Cb_plasma) - firstSignificantValue(Cp_plasma));
 timePerFrame = times(2) - times(1);
 delayTime = delayFrames * timePerFrame;
 tauA = delayTime;
