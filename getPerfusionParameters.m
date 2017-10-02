@@ -4,10 +4,8 @@ function [ af, dv, mtt, indexes, maxCorrCoef ] = getPerfusionParameters( ...
 %   Gets the perfusion parameter values from the dictionary characteristics.
 
 % Get the max correlation coefficient and its associated index(es)
-% Note: correlation coefficients are read to 4 decimal places to determine
-% if they're identical.
 maxCorrCoef = max(corrCoefs);
-indexes = find(corrCoefs == round(maxCorrCoef, 4));
+indexes = find(corrCoefs == maxCorrCoef);
 
 
 % Get the perfusion parameters
