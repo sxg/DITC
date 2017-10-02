@@ -40,7 +40,8 @@ Cp_plasma(1:baseFrame) = 0;
 % % CL = CL * 0.2627; %0.2627 = 0.22/mean(CL(end-5:end)); normalize the liver SI
 
 %% Tau calculation
-delayFrames = abs(find(Cb_plasma ~= 0, 1) - find(CL ~= 0, 1));
+% Find the first outlier, and consider it the first non-zero value
+delayFrames = abs(firstOutlier(diff(Cb_plasma)) - firstOutlier(diff(Cp_plasma)));
 timePerFrame = times(2) - times(1);
 delayTime = delayFrames * timePerFrame;
 tauA = delayTime;
