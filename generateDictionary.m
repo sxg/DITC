@@ -1,4 +1,4 @@
-function [ D ] = generateDictionary( times, AF, PV, alpha, TR, baseFrame, frames )
+function [ D ] = generateDictionary( times, AF, PV, alpha, TR )
 %generateDictionary Generates a dictionary of perfusion parameters
 %   generateDictionary generates a 2D matrix of all possible perfusion
 %   curves made by all combinations of perfusion parameters. Inputs are
@@ -16,22 +16,25 @@ R10L = 1/T10L;
 Hct = 0.4;
 relaxivity = 6.3;
 
+baseFrame = 1;
+[~, startFrame] = firstSignificant(PV);
+
 %startpoint = 2;% can get rid of some points at the beginning where there is no contrast
 
 %% Ca calculation
 % Yong's code
-S0b = mean(PV(baseFrame:baseFrame+frames)) * (1 - exp(-R10b * TR) * cos(alpha)) / (1 - exp(-R10b * TR)) / sin(alpha);
+S0b = mean(PV(baseFrame:startFrame)) * (1 - exp(-R10b * TR) * cos(alpha)) / (1 - exp(-R10b * TR)) / sin(alpha);
 R1b = log((S0b * sin(alpha) - AF .* cos(alpha)) ./ (S0b * sin(alpha) - AF)) / TR;
 Cb_artery = (R1b - R10b) * 1e3 / relaxivity; % Concentration in blood (mM)
 Cb_plasma = Cb_artery / (1 - Hct); % Concentration in plasma of artery (mM)
-Cb_plasma(1:baseFrame) = 0;
+% Cb_plasma(1:baseFrame) = 0;
 
 %% Cpv calculation
-S0p = mean(PV(baseFrame:baseFrame+frames)) * (1 - exp(-R10p * TR) * cos(alpha)) / (1 - exp(-R10p * TR)) / sin(alpha); %GE equation
+S0p = mean(PV(baseFrame:startFrame)) * (1 - exp(-R10p * TR) * cos(alpha)) / (1 - exp(-R10p * TR)) / sin(alpha); %GE equation
 R1p = log((S0p * sin(alpha) - PV .* cos(alpha)) ./ (S0p * sin(alpha) - PV)) / TR;
 Cp_artery = (R1p - R10p) * 1e3 / relaxivity; % Concentration in portal vein (mM)
 Cp_plasma = Cp_artery / (1 - Hct); % Concentration in plasma of portal vein (mM)
-Cp_plasma(1:baseFrame) = 0;
+% Cp_plasma(1:baseFrame) = 0;
 
 %% CL calculation
 % S0L = mean(Liver(baseFrame:baseFrame+frames)) * (1 - exp(-R10L * TR) * cos(alpha)) / (1 - exp(-R10L * TR)) / sin(alpha); %GE equation
@@ -51,7 +54,7 @@ tauP = delayTime;
 
 %% Ranges for perfusion parameters
 AF_range = linspace(0, 1, 101);
-DV_range = linspace(0, 1, 21);
+DV_range = [0.1886];
 MTT_range = linspace(1, 100, 100);
 % t1_range = linspace(0, 0.02, 21); % t1 redefined as tauA
 % t2_range = linspace(0, 0.02, 21); % t2 redefined as tauP
