@@ -23,3 +23,8 @@ octave-workspace
 
 # Large data files
 *.mat
+
+# Spreadsheets
+*.xlsx
+*.xls
+*.csv
