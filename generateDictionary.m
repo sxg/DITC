@@ -70,7 +70,7 @@ for i_AF = 1:length(AF_range)
         for i_MTT = 1:length(MTT_range)
             dispstat(sprintf('%d %d %d', i_AF, i_DV, i_MTT));
             idx = sub2ind([length(AF_range), length(DV_range), length(MTT_range)], i_AF, i_DV, i_MTT);
-            D(:, idx) = DISC(times, Cb_plasma, Cp_plasma, AF_range(i_AF), DV_range(i_DV), MTT_range(i_MTT), tauA, tauP);
+            D(:, idx) = disc(times, Cb_plasma, Cp_plasma, AF_range(i_AF), DV_range(i_DV), MTT_range(i_MTT), tauA, tauP);
         end
     end
 end
