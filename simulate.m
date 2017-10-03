@@ -26,7 +26,7 @@ mttRange = linspace(1, 100, 100);
 
 dispstat('', 'init');
 for sim = 1:nSims
-    dispstat(sprintf('%d \%', round(sim / nSims * 100)));
+    dispstat(sprintf('%d %%', round(sim / nSims * 100)));
     
     % Add noise and match the curve
     noisyCurve = addNoise(curve, snr);
