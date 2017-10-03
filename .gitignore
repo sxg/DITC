@@ -21,6 +21,9 @@ octave-workspace
 # Simulink autosave extension
 *.autosave.m~
 
+# Script files
+*Script.m
+
 # Large data files
 *.mat
 
