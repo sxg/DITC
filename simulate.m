@@ -31,14 +31,14 @@ for sim = 1:nSims
     % Add noise and match the curve
     noisyCurve = addNoise(curve, snr);
     corrCoefs = matchCurve(noisyCurve, dict);
-    [af, dv, mtt, index, maxCorrCoef] = getPerfusionParameters( ...
+    [af, dv, mtt, k1a, k1p, k2, index, maxCorrCoef] = getPerfusionParameters( ...
         corrCoefs, afRange, dvRange, mttRange);
     
     % Store the data
     noisyCurves(sim, :) = noisyCurves';
     fitCurves(sim, :) = dict(:, index)';
     fitCurveIndexes(sim) = index;
-    fitPerfParams(sim, 1:3) = [af, dv, mtt];
+    fitPerfParams(sim, :) = [af, dv, mtt, k1a, k1p, k2];
     fitCorrCoefs(sim) = maxCorrCoef;
 end
 
