@@ -37,9 +37,9 @@ for sim = 1:nSims
     % Store the data
     noisyCurves(sim, :) = noisyCurves';
     fitCurves(sim, :) = dict(:, index)';
-    fitCurveIndexes(i) = index;
-    fitPerfParams(i, 1:3) = [af, dv, mtt];
-    fitCorrCoefs(i) = maxCorrCoef;
+    fitCurveIndexes(sim) = index;
+    fitPerfParams(sim, 1:3) = [af, dv, mtt];
+    fitCorrCoefs(sim) = maxCorrCoef;
 end
 
 %% Save the data
