@@ -1,5 +1,6 @@
 function [noisyCurves, fitCurves, fitCurveIndexes, fitPerfParams, ...
-    fitCorrCoefs] = simulate(dict, curve, nSims, snr)
+          fitCorrCoefs] = simulate(dict, curve, afRange, dvRange, ...
+                                   mttRange, nSims, snr)
 %simulate Runs a Monte Carlo simulation of the dictionary fitting.
 
 %% Setup
@@ -17,11 +18,6 @@ fitCurveIndexes = NaN(nSims, 1);
 fitPerfParams = NaN(nSims, 6); % af, dv, mtt, k1a, k1p, k2 (in order)
 fitCorrCoefs = NaN(nSims, 1);
 
-% Setup ranges
-afRange = linspace(0, 1, 101);
-dvRange = [0.1886];
-mttRange = linspace(1, 100, 100);
-
 %% Run the Monte Carlo simulations
 
 dispstat('', 'init');
@@ -35,7 +31,7 @@ for sim = 1:nSims
         corrCoefs, afRange, dvRange, mttRange);
     
     % Store the data
-    noisyCurves(sim, :) = noisyCurves';
+    noisyCurves(sim, :) = noisyCurve';
     fitCurves(sim, :) = dict(:, index)';
     fitCurveIndexes(sim) = index;
     fitPerfParams(sim, :) = [af, dv, mtt, k1a, k1p, k2];
@@ -45,8 +41,8 @@ end
 %% Save the data
 
 fileName = sprintf('SNRLevel-%d.mat', snr);
-save(fileName, noisyCurves, fitCurves, fitCurveIndexes, fitPerfParams, ...
-    fitCorrCoefs);
+save(fileName, 'noisyCurves', 'fitCurves', 'fitCurveIndexes', ...
+    'fitPerfParams', 'fitCorrCoefs');
 
 end
 

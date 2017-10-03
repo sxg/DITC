@@ -1,4 +1,4 @@
-function [ D ] = generateDictionary( times, AF, PV, alpha, TR )
+function [ D ] = generateDictionary( times, AF, PV, afRange, dvRange, mttRange, alpha, TR )
 %generateDictionary Generates a dictionary of perfusion parameters
 %   generateDictionary generates a 2D matrix of all possible perfusion
 %   curves made by all combinations of perfusion parameters. Inputs are
@@ -18,8 +18,6 @@ relaxivity = 6.3;
 
 baseFrame = 1;
 [~, startFrame] = firstSignificant(PV);
-
-%startpoint = 2;% can get rid of some points at the beginning where there is no contrast
 
 %% Ca calculation
 % Yong's code
@@ -52,39 +50,20 @@ delayTime = delayFrames * timePerFrame;
 tauA = delayTime;
 tauP = delayTime;
 
-%% Ranges for perfusion parameters
-AF_range = linspace(0, 1, 101);
-DV_range = [0.1886];
-MTT_range = linspace(1, 100, 100);
-% t1_range = linspace(0, 0.02, 21); % t1 redefined as tauA
-% t2_range = linspace(0, 0.02, 21); % t2 redefined as tauP
-
-%times = times(startpoint:end);
-%Cb_plasma = Cb_plasma(startpoint:end);
-%Cp_plasma = Cp_plasma(startpoint:end);
+%% Generate the dictionary
 
 dispstat('', 'init');
-D = zeros(length(times), length(AF_range) * length(DV_range) * length(MTT_range));
-for i_AF = 1:length(AF_range)
-    for i_DV = 1:length(DV_range)
-        for i_MTT = 1:length(MTT_range)
-            dispstat(sprintf('%d %d %d', i_AF, i_DV, i_MTT));
-            idx = sub2ind([length(AF_range), length(DV_range), length(MTT_range)], i_AF, i_DV, i_MTT);
-            D(:, idx) = disc(times, Cb_plasma, Cp_plasma, AF_range(i_AF), DV_range(i_DV), MTT_range(i_MTT), tauA, tauP);
+D = zeros(length(times), length(afRange) * length(dvRange) * length(mttRange));
+for iAF = 1:length(afRange)
+    for iDV = 1:length(dvRange)
+        for iMTT = 1:length(mttRange)
+            dispstat(sprintf('%d %d %d', iAF, iDV, iMTT));
+            idx = sub2ind([length(afRange), length(dvRange), length(mttRange)], iAF, iDV, iMTT);
+            D(:, idx) = disc(times, Cb_plasma, Cp_plasma, afRange(iAF), dvRange(iDV), mttRange(iMTT), tauA, tauP);
         end
     end
 end
 dispstat('Done.', 'keepprev');
-
-% Explicitly populate the dictionary with the perfusion parameters fitted
-% by the least squares method
-% D(:, 1) = DISC(times, Cb_plasma, Cp_plasma, 0.4145, 0.1711, 4.7196, 0.0034, 0.0028);
-
-% Data from the unnormalized dictionary appears to be more accurate
-% D = normc(D);
-
-% Convert the 6 dimensional, non-normalized dictionary to 2 dimensions
-% D = D_spread(:, :);
 
 end
 
