@@ -7,7 +7,7 @@ function [noisyCurves, fitCurves, fitCurveIndexes, fitPerfParams, ...
 
 % Input validation
 validateattributes(dict, {'numeric'}, {'2d', 'nonempty', 'nonsparse'});
-validateattributes(curve, {'numeric'}, {'vector'});
+validateattributes(curve, {'numeric'}, {'column'});
 validateattributes(nSims, {'numeric'}, {'scalar'});
 validateattributes(snr, {'numeric'}, {'scalar'});
 
@@ -18,6 +18,9 @@ fitCurveIndexes = NaN(nSims, 1);
 fitPerfParams = NaN(nSims, 6); % af, dv, mtt, k1a, k1p, k2 (in order)
 fitCorrCoefs = NaN(nSims, 1);
 time = NaN(nSims, 1);
+
+% Normalize the curve
+curve = normc(curve);
 
 %% Run the Monte Carlo simulations
 
@@ -37,7 +40,7 @@ for sim = 1:nSims
     
     % Store the data
     noisyCurves(sim, :) = noisyCurve';
-    fitCurves(sim, :) = dict(:, index)';
+    fitCurves(sim, :) = normr(dict(:, index)'); % Normalize the fit curve
     fitCurveIndexes(sim) = index;
     fitPerfParams(sim, :) = [af, dv, mtt, k1a, k1p, k2];
     fitCorrCoefs(sim) = maxCorrCoef;
