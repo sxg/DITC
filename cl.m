@@ -11,7 +11,9 @@ S0L = mean(Liver(baseFrame:startFrame)) * (1 - exp(-R10L * TR) ...
 R1L = abs(log((S0L * sin(alpha) - liver .* cos(alpha)) ./ (S0L ...
     * sin(alpha) - Liver)) / TR);
 cl = (R1L - R10L) * 1e3 / relaxivity; % Concentration in liver
-% CL = CL * 0.2627; %0.2627 = 0.22/mean(CL(end-5:end)); normalize the liver SI
+% Normalize the liver SI
+% Unsure if this next line is necessary.
+% CL = CL * 0.2627; %0.2627 = 0.22/mean(CL(end-5:end)); 
 
 end
 
