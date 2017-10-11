@@ -9,7 +9,8 @@ if ~isrow(curve)
 end
 
 % Normalized dot product with mean centering
-corrCoefs = normr(curve - mean(curve)) * normc(dict - mean(dict));
+% corrCoefs = normr(curve - mean(curve)) * normc(dict - mean(dict));
+corrCoefs = normr(curve - mean(curve)) * dict;
 
 end
 
