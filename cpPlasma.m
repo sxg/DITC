@@ -1,4 +1,4 @@
-function [cpPlasma] = cpPlasma(AF, PV, baseFrame, startFrame)
+function [cpPlasma] = cpPlasma(PV, baseFrame, startFrame)
 %cpPlasma Contrast concentration in the portal venous plasma.
 
 alpha = 15 * pi / 180;
