@@ -10,7 +10,7 @@ end
 
 % Normalized dot product with mean centering
 % corrCoefs = normr(curve - mean(curve)) * normc(dict - mean(dict));
-corrCoefs = normr(curve - mean(curve)) * dict;
+corrCoefs = curve * dict;
 
 end
 

@@ -19,10 +19,7 @@ fitPerfParams = NaN(nSims, 6); % af, dv, mtt, k1a, k1p, k2 (in order)
 fitCorrCoefs = NaN(nSims, 1);
 time = NaN(nSims, 1);
 
-% Normalize the curve
-curve = normc(curve);
-
-% Generate a normalized, mean-centered dictionary and curve
+% Generate a normalized, mean-centered dictionary
 nmcDict = normc(dict - mean(dict));
 
 %% Run the Monte Carlo simulations
@@ -31,11 +28,12 @@ dispstat('', 'init');
 for sim = 1:nSims
     dispstat(sprintf('%d %%', round(sim / nSims * 100)));
     
-    % Add noise
-    noisyCurve = addNoise(curve, snr);
+    % Add noise, normalize, and mean-center
+    noisyCurve = normc(addNoise(curve, snr));
+    nmcNoisyCurve = noisyCurve - mean(noisyCurve);
     tic; % Start the timer
     % Match the curve
-    corrCoefs = matchCurve(noisyCurve, nmcDict);
+    corrCoefs = matchCurve(nmcNoisyCurve, nmcDict);
     [af, dv, mtt, k1a, k1p, k2, index, maxCorrCoef] = ... 
         getPerfusionParameters(corrCoefs, afRange, dvRange, mttRange);
     t = toc; % Stop the timer
