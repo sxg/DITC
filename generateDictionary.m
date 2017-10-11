@@ -21,18 +21,20 @@ baseFrame = 1;
 
 %% Ca calculation
 % Yong's code
-S0b = mean(PV(baseFrame:startFrame)) * (1 - exp(-R10b * TR) * cos(alpha)) / (1 - exp(-R10b * TR)) / sin(alpha);
-R1b = log((S0b * sin(alpha) - AF .* cos(alpha)) ./ (S0b * sin(alpha) - AF)) / TR;
-Cb_artery = (R1b - R10b) * 1e3 / relaxivity; % Concentration in blood (mM)
-Cb_plasma = Cb_artery / (1 - Hct); % Concentration in plasma of artery (mM)
+% S0b = mean(PV(baseFrame:startFrame)) * (1 - exp(-R10b * TR) * cos(alpha)) / (1 - exp(-R10b * TR)) / sin(alpha);
+% R1b = log((S0b * sin(alpha) - AF .* cos(alpha)) ./ (S0b * sin(alpha) - AF)) / TR;
+% Cb_artery = (R1b - R10b) * 1e3 / relaxivity; % Concentration in blood (mM)
+% Cb_plasma = Cb_artery / (1 - Hct); % Concentration in plasma of artery (mM)
 % Cb_plasma(1:baseFrame) = 0;
+Cb_plasma = cbPlasma(AF, PV, baseFrame, startFrame);
 
 %% Cpv calculation
-S0p = mean(PV(baseFrame:startFrame)) * (1 - exp(-R10p * TR) * cos(alpha)) / (1 - exp(-R10p * TR)) / sin(alpha); %GE equation
-R1p = log((S0p * sin(alpha) - PV .* cos(alpha)) ./ (S0p * sin(alpha) - PV)) / TR;
-Cp_artery = (R1p - R10p) * 1e3 / relaxivity; % Concentration in portal vein (mM)
-Cp_plasma = Cp_artery / (1 - Hct); % Concentration in plasma of portal vein (mM)
+% S0p = mean(PV(baseFrame:startFrame)) * (1 - exp(-R10p * TR) * cos(alpha)) / (1 - exp(-R10p * TR)) / sin(alpha); %GE equation
+% R1p = log((S0p * sin(alpha) - PV .* cos(alpha)) ./ (S0p * sin(alpha) - PV)) / TR;
+% Cp_artery = (R1p - R10p) * 1e3 / relaxivity; % Concentration in portal vein (mM)
+% Cp_plasma = Cp_artery / (1 - Hct); % Concentration in plasma of portal vein (mM)
 % Cp_plasma(1:baseFrame) = 0;
+Cp_plasma = cpPlasma(AF, PV, baseFrame, startFrame);
 
 %% CL calculation
 % S0L = mean(Liver(baseFrame:baseFrame+frames)) * (1 - exp(-R10L * TR) * cos(alpha)) / (1 - exp(-R10L * TR)) / sin(alpha); %GE equation
