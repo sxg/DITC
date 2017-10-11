@@ -1,20 +1,8 @@
-function [ D ] = generateDictionary( times, AF, PV, afRange, dvRange, mttRange, alpha, TR )
+function [ D ] = generateDictionary( times, AF, PV, afRange, dvRange, mttRange )
 %generateDictionary Generates a dictionary of perfusion parameters
 %   generateDictionary generates a 2D matrix of all possible perfusion
 %   curves made by all combinations of perfusion parameters. Inputs are
 %   specific to each data set.
-
-%% Constants
-%   T10 values are in milliseconds
-alpha = alpha * pi / 180;
-T10b = 1.664 * 1000;
-T10p = 1.584 * 1000;
-T10L = 0.8 * 1000;
-R10b = 1/T10b;
-R10p = 1/T10p;
-R10L = 1/T10L;
-Hct = 0.4;
-relaxivity = 6.3;
 
 baseFrame = 1;
 [~, startFrame] = firstSignificant(PV);
