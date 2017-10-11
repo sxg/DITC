@@ -1,7 +1,7 @@
 function [noisyCurves, fitCurves, fitCurveIndexes, fitPerfParams, ...
-          fitCorrCoefs, time] = simulate(dict, curve, afRange, dvRange, ...
-                                   mttRange, nSims, snr)
-%simulate Runs a Monte Carlo simulation of the dictionary fitting.
+          fitCorrCoefs, time] = simulateDictionary(dict, curve, ...
+          afRange, dvRange, mttRange, nSims, snr)
+%simulateDictionary Runs a Monte Carlo simulation of the dictionary match.
 
 %% Setup
 
