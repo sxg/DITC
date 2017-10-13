@@ -60,7 +60,7 @@ end
 
 %% Save the data
 
-fileName = sprintf('LSFit-SNRLevel-%d.mat', snr);
+fileName = sprintf('LSFit-SNR-%d.mat', snr);
 save(fileName, 'fitCurves', 'fitErrs', 'fitPerfParams', 'fitTime');
 
 end

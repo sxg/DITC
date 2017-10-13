@@ -53,7 +53,7 @@ end
 
 %% Save the data
 
-fileName = sprintf('DictMatch-SNRLevel-%d.mat', snr);
+fileName = sprintf('DictMatch-SNR-%d.mat', snr);
 save(fileName, 'matchCurves', 'matchCurveIndexes', 'matchPerfParams', ...
     'matchMaxCorrCoefs', 'matchTime');
 
