@@ -41,12 +41,11 @@ dispstat('', 'init');
 for sim = 1:nSims
     dispstat(sprintf('%d %%', round(sim / nSims * 100)));
     
-    % Normalize and mean-center the noisy curve
-    noisyCurve = normc(noisyCurves(:, sim));
-    nmcNoisyCurve = noisyCurve - mean(noisyCurve);
+    % Get the noisy curve
+    noisyCurve = noisyCurves(:, sim);
     tic; % Start the timer
     % Fit the curve
-    [af, dv, mtt, k1a, k1p, k2, err] = fitCurve(nmcNoisyCurve, times, ...
+    [af, dv, mtt, k1a, k1p, k2, err] = fitCurve(noisyCurve, times, ...
         ca, cp, tauA, tauP);
     t = toc; % Stop the timer
     
