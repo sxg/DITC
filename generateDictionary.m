@@ -22,7 +22,7 @@ Cb_plasma = cbPlasma(AF, PV, baseFrame, startFrame);
 % Cp_artery = (R1p - R10p) * 1e3 / relaxivity; % Concentration in portal vein (mM)
 % Cp_plasma = Cp_artery / (1 - Hct); % Concentration in plasma of portal vein (mM)
 % Cp_plasma(1:baseFrame) = 0;
-Cp_plasma = cpPlasma(AF, PV, baseFrame, startFrame);
+Cp_plasma = cpPlasma(PV, baseFrame, startFrame);
 
 %% CL calculation
 % S0L = mean(Liver(baseFrame:baseFrame+frames)) * (1 - exp(-R10L * TR) * cos(alpha)) / (1 - exp(-R10L * TR)) / sin(alpha); %GE equation
@@ -47,7 +47,7 @@ D = zeros(length(times), length(afRange) * length(dvRange) * length(mttRange));
 for iAF = 1:length(afRange)
     for iDV = 1:length(dvRange)
         for iMTT = 1:length(mttRange)
-            dispstat(sprintf('%d %d %d', iAF, iDV, iMTT));
+            dispstat(sprintf('%d %%', (iAF * iDV * iMTT) / (length(afRange) * length(dvRange) * length(mttRange))));
             idx = sub2ind([length(afRange), length(dvRange), length(mttRange)], iAF, iDV, iMTT);
             D(:, idx) = disc(times, Cb_plasma, Cp_plasma, afRange(iAF), dvRange(iDV), mttRange(iMTT), tauA, tauP);
         end
