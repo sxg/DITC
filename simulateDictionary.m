@@ -35,14 +35,13 @@ for sim = 1:nSims
     dispstat(sprintf('%d %%', round(sim / nSims * 100)));
     
     % Normalize and mean-center the noisy curve
-    noisyCurve = normc(noisyCurves(sim, :)');
+    noisyCurve = normc(noisyCurves(:, sim));
     nmcNoisyCurve = noisyCurve - mean(noisyCurve);
     tic; % Start the timer
     % Match the curve
     [af, dv, mtt, k1a, k1p, k2, index, maxCorrCoef] = ...
         matchCurve(nmcNoisyCurve, nmcDict, afRange, dvRange, mttRange);
     t = toc; % Stop the timer
-    
     
     % Store the data
     matchCurves(sim, :) = normr(dict(:, index)'); % Normalize the matched curve

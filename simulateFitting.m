@@ -42,7 +42,7 @@ for sim = 1:nSims
     dispstat(sprintf('%d %%', round(sim / nSims * 100)));
     
     % Normalize and mean-center the noisy curve
-    noisyCurve = normc(noisyCurves(sim, :)');
+    noisyCurve = normc(noisyCurves(:, sim));
     nmcNoisyCurve = noisyCurve - mean(noisyCurve);
     tic; % Start the timer
     % Fit the curve
