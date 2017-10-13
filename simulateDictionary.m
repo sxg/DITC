@@ -21,7 +21,7 @@ validateattributes(snr, {'numeric'}, {'scalar'});
 nSims = size(noisyCurves, 2);
 matchCurves = NaN(size(noisyCurves));
 matchCurveIndexes = NaN(nSims, 1);
-matchPerfParams = NaN(nSims, 6); % af, dv, mtt, k1a, k1p, k2 (in order)
+matchPerfParams = NaN(6, nSims); % af, dv, mtt, k1a, k1p, k2 (in order)
 matchMaxCorrCoefs = NaN(nSims, 1);
 matchTime = NaN(nSims, 1);
 
@@ -44,9 +44,9 @@ for sim = 1:nSims
     t = toc; % Stop the timer
     
     % Store the data
-    matchCurves(sim, :) = normr(dict(:, index)'); % Normalize the matched curve
+    matchCurves(:, sim) = normc(dict(:, index));
     matchCurveIndexes(sim) = index;
-    matchPerfParams(sim, :) = [af, dv, mtt, k1a, k1p, k2];
+    matchPerfParams(:, sim) = [af, dv, mtt, k1a, k1p, k2]';
     matchMaxCorrCoefs(sim) = maxCorrCoef;
     matchTime(sim) = t;
 end

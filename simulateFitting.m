@@ -17,7 +17,7 @@ validateattributes(snr, {'numeric'}, {'scalar'});
 nSims = size(noisyCurves, 2);
 fitCurves = NaN(size(noisyCurves));
 fitErrs = NaN(nSims, 1);
-fitPerfParams = NaN(nSims, 6); % af, dv, mtt, k1a, k1p, k2 (in order)
+fitPerfParams = NaN(6, nSims); % af, dv, mtt, k1a, k1p, k2 (in order)
 fitTime = NaN(nSims, 1);
 
 % Calculate the contrast concentrations
@@ -51,10 +51,10 @@ for sim = 1:nSims
     t = toc; % Stop the timer
     
     % Store the data
-    fitCurves(sim, :) = ...
-        normr(disc(times, ca, cp, af, dv, mtt, tauA, tauP)');
+    fitCurves(:, sim) = ...
+        normc(disc(times, ca, cp, af, dv, mtt, tauA, tauP));
     fitErrs(sim) = err;
-    fitPerfParams(sim, :) = [af, dv, mtt, k1a, k1p, k2];
+    fitPerfParams(:, sim) = [af, dv, mtt, k1a, k1p, k2]';
     fitTime(sim) = t;
 end
 
