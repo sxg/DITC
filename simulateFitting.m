@@ -1,22 +1,24 @@
-function [lsCurves, fitErrs, fitPerfParams, time] ...
-    = simulateFitting(noisyCurves, times, AF, PV, snr)
-%simulateFitting Runs a Monte Carlo simulation of the least squares fit.
+function [fitCurves, fitErrs, fitPerfParams, fitTime] ...
+    = simulateFitting(noisyCurves, times, AF, PV, nSims, snr)
+%simulateFitting Runs Monte Carlo simulations of least squares fitting.
 
 %% Setup
 
 % Input validation
-validateattributes(noisyCurves, {'numeric'}, {'2d'});
-validateattributes(times, {'numeric'}, {'column'});
-validateattributes(AF, {'numeric'}, {'column'});
-validateattributes(PV, {'numeric'}, {'column'});
+validateattributes(noisyCurves, {'numeric'}, ...
+    {'2d', 'nonempty', 'nonsparse'});
+validateattributes(times, {'numeric'}, ...
+    {'column', 'nonempty', 'increasing'});
+validateattributes(AF, {'numeric'}, {'column', 'nonempty'});
+validateattributes(PV, {'numeric'}, {'column', 'nonempty'});
+validateattributes(nSims, {'numeric'}, {'scalar'});
 validateattributes(snr, {'numeric'}, {'scalar'});
 
 % Create outputs
-nSims = size(noisyCurves, 1);
-lsCurves = NaN(size(noisyCurves));
+fitCurves = NaN(size(noisyCurves));
 fitErrs = NaN(nSims, 1);
 fitPerfParams = NaN(nSims, 6); % af, dv, mtt, k1a, k1p, k2 (in order)
-time = NaN(nSims, 1);
+fitTime = NaN(nSims, 1);
 
 % Calculate the contrast concentrations
 baseFrame = 1;
@@ -24,10 +26,10 @@ baseFrame = 1;
 ca = cbPlasma(AF, PV, baseFrame, startFrame);
 cp = cpPlasma(PV, baseFrame, startFrame); 
 
-% Calculate tau
+% Calculate tau (look at Chouhan's paper for a better implementation)
 [~, i1] = firstSignificant(ca);
 [~, i2] = firstSignificant(cp);
-dt = times(2) - times(1);
+dt = abs(times(2) - times(1));
 delayFrames = abs(i1 - i2);
 delayTime = delayFrames * dt;
 tauA = delayTime;
@@ -39,25 +41,27 @@ dispstat('', 'init');
 for sim = 1:nSims
     dispstat(sprintf('%d %%', round(sim / nSims * 100)));
     
-    % Get noisy curve
-    noisyCurve = noisyCurves(sim, :);
+    % Normalize and mean-center the noisy curve
+    noisyCurve = normc(noisyCurves(sim, :)');
+    nmcNoisyCurve = noisyCurve - mean(noisyCurve);
     tic; % Start the timer
     % Fit the curve
-    [af, dv, mtt, k1a, k1p, k2, err] = fitCurve(noisyCurve, times, ca, ...
-        cp, tauA, tauP);
+    [af, dv, mtt, k1a, k1p, k2, err] = fitCurve(nmcNoisyCurve, times, ...
+        ca, cp, tauA, tauP);
     t = toc; % Stop the timer
     
     % Store the data
-    lsCurves(sim, :) = normc(disc(times, ca, cp, af, dv, mtt, tauA, tauP));
+    fitCurves(sim, :) = ...
+        normr(disc(times, ca, cp, af, dv, mtt, tauA, tauP)');
     fitErrs(sim) = err;
     fitPerfParams(sim, :) = [af, dv, mtt, k1a, k1p, k2];
-    time(sim) = t;
+    fitTime(sim) = t;
 end
 
 %% Save the data
 
-fileName = sprintf('LS-SNRLevel-%d.mat', snr);
-save(fileName, 'noisyCurves', 'lsCurves', 'fitErrs', 'fitPerfParams', 'time');
+fileName = sprintf('LSFit-SNRLevel-%d.mat', snr);
+save(fileName, 'fitCurves', 'fitErrs', 'fitPerfParams', 'fitTime');
 
 end
 
