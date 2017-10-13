@@ -39,9 +39,8 @@ for sim = 1:nSims
     nmcNoisyCurve = noisyCurve - mean(noisyCurve);
     tic; % Start the timer
     % Match the curve
-    corrCoefs = matchCurve(nmcNoisyCurve, nmcDict);
-    [af, dv, mtt, k1a, k1p, k2, index, maxCorrCoef] = ... 
-        getPerfusionParameters(corrCoefs, afRange, dvRange, mttRange);
+    [af, dv, mtt, k1a, k1p, k2, index, maxCorrCoef] = ...
+        matchCurve(nmcNoisyCurve, nmcDict, afRange, dvRange, mttRange);
     t = toc; % Stop the timer
     
     
