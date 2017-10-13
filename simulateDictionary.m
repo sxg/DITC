@@ -1,6 +1,6 @@
 function [matchCurves, matchCurveIndexes, matchPerfParams, ...
-    matchMaxCorrCoefs, matchTime] = simulateDictionary(noisyCurves, dict, ...
-    afRange, dvRange, mttRange, nSims, snr)
+    matchMaxCorrCoefs, matchTime] = simulateDictionary(noisyCurves, ...
+    dict, afRange, dvRange, mttRange, snr)
 %simulateDictionary Runs Monte Carlo simulations of dictionary matching.
 
 %% Setup
@@ -15,11 +15,11 @@ validateattributes(dvRange, {'numeric'}, ...
     {'row', 'nonempty', 'increasing'});
 validateattributes(mttRange, {'numeric'}, ...
     {'row', 'nonempty', 'increasing'});
-validateattributes(nSims, {'numeric'}, {'scalar'});
 validateattributes(snr, {'numeric'}, {'scalar'});
 
 % Create outputs
-matchCurves = NaN(nSims, size(dict, 1));
+nSims = size(noisyCurves, 2);
+matchCurves = NaN(size(noisyCurves));
 matchCurveIndexes = NaN(nSims, 1);
 matchPerfParams = NaN(nSims, 6); % af, dv, mtt, k1a, k1p, k2 (in order)
 matchMaxCorrCoefs = NaN(nSims, 1);

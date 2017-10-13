@@ -1,5 +1,5 @@
 function [fitCurves, fitErrs, fitPerfParams, fitTime] ...
-    = simulateFitting(noisyCurves, times, AF, PV, nSims, snr)
+    = simulateFitting(noisyCurves, times, AF, PV, snr)
 %simulateFitting Runs Monte Carlo simulations of least squares fitting.
 
 %% Setup
@@ -11,10 +11,10 @@ validateattributes(times, {'numeric'}, ...
     {'column', 'nonempty', 'increasing'});
 validateattributes(AF, {'numeric'}, {'column', 'nonempty'});
 validateattributes(PV, {'numeric'}, {'column', 'nonempty'});
-validateattributes(nSims, {'numeric'}, {'scalar'});
 validateattributes(snr, {'numeric'}, {'scalar'});
 
 % Create outputs
+nSims = size(noisyCurves, 2);
 fitCurves = NaN(size(noisyCurves));
 fitErrs = NaN(nSims, 1);
 fitPerfParams = NaN(nSims, 6); % af, dv, mtt, k1a, k1p, k2 (in order)
