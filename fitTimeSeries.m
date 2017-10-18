@@ -1,23 +1,30 @@
-function [perfusionVolume] = fitTimeSeries(timeSeries, times, AF, PV)
-%fitTimeSeries Fits perfusion parameters to time series data.
+function [perfusionVolume] = fitTimeSeries(timeSeries, mask, times, ...
+    artInputFunc, pvInputFunc)
+%fitTimeSeries Gets perfusion parameters by least squares curve fitting.
 
 %% Setup
 
 % Input validation
 validateattributes(timeSeries, {'numeric'}, {'nonempty', 'nonsparse'});
+validateattributes(mask, {'numeric'}, {'nonempty', 'binary'});
+validateattributes(times, {'numeric'}, ...
+    {'nonempty', 'column', 'increasing'});
+validateattributes(artInputFunc, {'numeric'}, ...
+    {'nonempty', 'column'});
+validateattributes(pvInputFunc, {'numeric'}, ...
+    {'nonempty', 'column'});
 
 % Create output
 l = size(timeSeries, 1);
 w = size(timeSeries, 2);
 d = size(timeSeries, 3);
-t = size(timeSeries, 4);
 perfusionVolume = zeros(l, w, d, 3);
 
 % Calculate the contrast concentrations
 baseFrame = 1;
-[~, startFrame] = firstSignificant(PV);
-ca = cbPlasma(AF, PV, baseFrame, startFrame);
-cp = cpPlasma(PV, baseFrame, startFrame); 
+[~, startFrame] = firstSignificant(pvInputFunc);
+ca = cbPlasma(artInputFunc, pvInputFunc, baseFrame, startFrame);
+cp = cpPlasma(pvInputFunc, baseFrame, startFrame); 
 
 % Calculate tau (look at Chouhan's paper for a better implementation)
 [~, i1] = firstSignificant(ca);
@@ -28,24 +35,19 @@ delayTime = delayFrames * dt;
 tauA = delayTime;
 tauP = delayTime;
 
+% Get the linear indexes from the mask
+indexList = find(mask);
+[i, j, k] = ind2sub([l, w, d], indexList);
+
 %% Fit the perfusion parameters
 
 dispstat('', 'init');
-index = 0;
 tic; % Start the timer
-for i = 1:l
-    for j = 1:w
-        for k = 1:d
-            index = index + 1;
-            dispstat(sprintf('%d %%', 100 * (index) / (l * w * d)));
-            voxel = squeeze(timeSeries(i, j, k, :));
-            if any(voxel)
-                [af, dv, mtt, ~, ~, ~, ~] = fitCurve(voxel, times, ca, ...
-                    cp, tauA, tauP);
-                perfusionVolume(i, j, k, :) = [af, dv, mtt];
-            end
-       end
-    end
+for index = 1:length(indexList)
+    dispstat(sprintf('%d %%', 100 * (index) / length(indexList)));
+    voxel = squeeze(timeSeries(i(index), j(index), k(index), :));
+    [af, dv, mtt, ~, ~, ~, ~] = fitCurve(voxel, times, ca, cp, tauA, tauP);
+    perfusionVolume(i(index), j(index), k(index), :) = [af, dv, mtt];
 end
 toc; % Stop the timer
 
