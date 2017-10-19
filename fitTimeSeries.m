@@ -18,26 +18,21 @@ validateattributes(pvInputFunc, {'numeric'}, ...
 l = size(timeSeries, 1);
 w = size(timeSeries, 2);
 d = size(timeSeries, 3);
-perfusionVolume = zeros(l, w, d, 3);
+perfusionVolume = zeros(l, w, d, 6);
 
 % Calculate the contrast concentrations
-baseFrame = 1;
-[~, startFrame] = firstSignificant(pvInputFunc);
-ca = cbPlasma(artInputFunc, pvInputFunc, baseFrame, startFrame);
-cp = cpPlasma(pvInputFunc, baseFrame, startFrame); 
+cA = concArtery(artInputFunc, pvInputFunc);
+cP = concPV(pvInputFunc); 
 
-% Calculate tau (look at Chouhan's paper for a better implementation)
-[~, i1] = firstSignificant(ca);
-[~, i2] = firstSignificant(cp);
+% Calculate tauA and tauP
+[artStart, ~] = findRise(cA);
+[pvStart, ~] = findRise(cP);
 dt = abs(times(2) - times(1));
-delayFrames = abs(i1 - i2);
-delayTime = delayFrames * dt;
-tauA = delayTime;
-tauP = delayTime;
 
 % Get the linear indexes from the mask
 indexList = find(mask);
 [i, j, k] = ind2sub([l, w, d], indexList);
+tauList = NaN(length(indexList), 2);
 
 %% Fit the perfusion parameters
 
@@ -46,9 +41,21 @@ tic; % Start the timer
 for index = 1:length(indexList)
     dispstat(sprintf('%d %%', 100 * (index) / length(indexList)));
     voxel = squeeze(timeSeries(i(index), j(index), k(index), :));
-    [af, dv, mtt, ~, ~, ~, ~] = fitCurve(voxel, times, ca, cp, tauA, tauP);
-    perfusionVolume(i(index), j(index), k(index), :) = [af, dv, mtt];
+    cL = concLiver(voxel);
+    [liverStart, ~] = findRise(voxel);
+    artDelayFrames = liverStart - artStart;
+    pvDelayFrames = liverStart - pvStart;
+    tauA = artDelayFrames * dt;
+    tauP = pvDelayFrames * dt;
+    tauList(index, :) = [tauA, tauP];
+    [af, dv, mtt, k1a, k1p, k2, err] = fitCurve(cL, times, cA, cP, ...
+        tauA, tauP);
+    perfusionVolume(i(index), j(index), k(index), :) = ...
+        [af, dv, mtt, k1a, k1p, k2];
 end
-toc; % Stop the timer
+time = toc; % Stop the timer
+
+% Save the data
+save('fitPerfuionVolume.mat', 'perfusionVolume', 'tauList', 'time', 'err');
 
 end
