@@ -21,10 +21,10 @@ for idx = 1:length(times)
     for idt = 1:idx
         sumA = 0;
         sumP = 0;
-        if (round(idt - iTauA)) > 0
+        if (round(idt - iTauA)) > 0 && (round(idt - iTauA)) <= size(Ca, 1)
             sumA = k1a * Ca(round(idt - iTauA));
         end
-        if (round(idt - iTauP)) > 0
+        if (round(idt - iTauP)) > 0 && (round(idt - iTauP)) <= size(Cp, 1)
             sumP = k1p * Cp(round(idt - iTauP));
         end
         sum = sum + (sumA + sumP) * (exp(-k2 * (idx - idt) * dt) * dt);
