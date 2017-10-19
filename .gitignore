@@ -31,3 +31,6 @@ octave-workspace
 *.xlsx
 *.xls
 *.csv
+
+# .DS_Store
+.DS_Store
