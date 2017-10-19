@@ -1,4 +1,4 @@
-function [cA] = concArtery(artInputFunc, pvInputFunc, artStart)
+function [cA] = concArtery(artInputFunc, pvInputFunc)
 %concArtery Contrast concentration in the arterial plasma.
 
 alpha = 15 * pi / 180;
@@ -7,6 +7,8 @@ T10b = 1.664 * 1000;
 R10b = 1/T10b;
 relaxivity = 6.3;
 Hct = 0.4;
+
+[artStart, ~] = findRise(artInputFunc);
 
 S0b = mean(pvInputFunc(1:artStart)) * (1 - exp(-R10b * TR) ...
     * cos(alpha)) / (1 - exp(-R10b * TR)) / sin(alpha);
