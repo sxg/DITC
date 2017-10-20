@@ -39,7 +39,7 @@ tauList = NaN(length(indexList), 2);
 dispstat('', 'init');
 tic; % Start the timer
 for index = 1:length(indexList)
-    dispstat(sprintf('%d %%', 100 * (index) / length(indexList)));
+    dispstat(sprintf('%.2f %%', 100 * (index) / length(indexList)));
     voxel = squeeze(timeSeries(i(index), j(index), k(index), :));
     cL = concLiver(voxel);
     [liverStart, ~] = findRise(voxel);
