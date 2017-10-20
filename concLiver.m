@@ -3,7 +3,7 @@ function [cL] = concLiver(liverInputFunc)
 
 alpha = 15 * pi / 180;
 TR = 5.12;
-T10l = 747;
+T10l = 800;
 R10l = 1/T10l;
 relaxivity = 6.3;
 
