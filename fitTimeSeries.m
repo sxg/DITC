@@ -1,4 +1,4 @@
-function [perfusionVolume] = fitTimeSeries(timeSeries, mask, times, ...
+function [fitPerfParams] = fitTimeSeries(timeSeries, mask, times, ...
     artInputFunc, pvInputFunc)
 %fitTimeSeries Gets perfusion parameters by least squares curve fitting.
 
@@ -18,7 +18,9 @@ validateattributes(pvInputFunc, {'numeric'}, ...
 l = size(timeSeries, 1);
 w = size(timeSeries, 2);
 d = size(timeSeries, 3);
-perfusionVolume = zeros(l, w, d, 6);
+t = size(timeSeries, 4);
+fitPerfParams = zeros(l, w, d, 8);
+fitCurves = zeros(l, w, d, t);
 
 % Calculate the contrast concentrations
 cA = concArtery(artInputFunc, pvInputFunc);
@@ -32,7 +34,6 @@ dt = abs(times(2) - times(1));
 % Get the linear indexes from the mask
 indexList = find(mask);
 [i, j, k] = ind2sub([l, w, d], indexList);
-tauList = NaN(length(indexList), 2);
 
 %% Fit the perfusion parameters
 
@@ -47,15 +48,23 @@ for index = 1:length(indexList)
     pvDelayFrames = liverStart - pvStart;
     tauA = min(artDelayFrames * dt, 20.10);
     tauP = min(pvDelayFrames * dt, 10.05);
-    tauList(index, :) = [tauA, tauP];
-    [af, dv, mtt, k1a, k1p, k2, err] = fitCurve(cL, times, cA, cP, ...
+    [af, dv, mtt, k1a, k1p, k2, ~] = fitCurve(cL, times, cA, cP, ...
         tauA, tauP);
-    perfusionVolume(i(index), j(index), k(index), :) = ...
-        [af, dv, mtt, k1a, k1p, k2];
+    fitPerfParams(i(index), j(index), k(index), :) = ...
+        [af, dv, mtt, tauA, tauP, k1a, k1p, k2];
 end
 time = toc; % Stop the timer
 
+% Store the fitted curves
+for index = 1:length(indexList)
+    [af, dv, mtt, tauA, tauP] = ...
+        fitPerfParams(i(index), j(index), k(index), 1:5);
+    fitCurves(i(index), j(index), k(index), :) = ...
+        normc(disc(times, ca, cp, af, dv, mtt, tauA, tauP));
+end
+
 % Save the data
-save('fitPerfuionVolume.mat', 'perfusionVolume', 'tauList', 'time', 'err');
+save('fitPerfuionVolume.mat', ...
+    'fitPerfParams', 'fitCurves', 'time');
 
 end
