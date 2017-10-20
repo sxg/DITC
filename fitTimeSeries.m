@@ -45,8 +45,8 @@ for index = 1:length(indexList)
     [liverStart, ~] = findRise(voxel);
     artDelayFrames = liverStart - artStart;
     pvDelayFrames = liverStart - pvStart;
-    tauA = artDelayFrames * dt;
-    tauP = pvDelayFrames * dt;
+    tauA = min(artDelayFrames * dt, 20.10);
+    tauP = min(pvDelayFrames * dt, 10.05);
     tauList(index, :) = [tauA, tauP];
     [af, dv, mtt, k1a, k1p, k2, err] = fitCurve(cL, times, cA, cP, ...
         tauA, tauP);
