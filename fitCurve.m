@@ -20,8 +20,6 @@ xdata = [times, ca, cp, repmat(tauA, nData, 1), repmat(tauP, nData, 1)];
 ydata = curve; % alias for readability
 lb = [0, 0, 1];
 ub = [1, 1, 100];
-% [af, dv, mtt, err] = lsqcurvefit(@discLSWrapper, x0, xdata, ydata, lb, ...
-%     ub, opts);
 [x, err] = lsqcurvefit(@discLSWrapper, x0, xdata, ydata, lb, ub, opts);
 af = x(1);
 dv = x(2);
