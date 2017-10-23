@@ -1,4 +1,4 @@
-function [cpPlasma] = cpPlasma(PV, baseFrame, startFrame)
+function [cpPlasma] = cpPlasma(PV, startFrame)
 %cpPlasma Contrast concentration in the portal venous plasma.
 
 alpha = 15 * pi / 180;
@@ -8,7 +8,7 @@ R10p = 1/T10p;
 relaxivity = 6.3;
 Hct = 0.4;
 
-S0p = mean(PV(baseFrame:startFrame)) * (1 - exp(-R10p * TR) ...
+S0p = mean(PV(1:startFrame)) * (1 - exp(-R10p * TR) ...
     * cos(alpha)) / (1 - exp(-R10p * TR)) / sin(alpha); %GE equation
 R1p = log((S0p * sin(alpha) - PV .* cos(alpha)) ./ (S0p * sin(alpha) ...
     - PV)) / TR;

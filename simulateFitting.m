@@ -21,10 +21,9 @@ fitPerfParams = NaN(8, nSims); % af, dv, mtt, k1a, k1p, k2 (in order)
 fitTime = NaN(1, nSims);
 
 % Calculate the contrast concentrations
-baseFrame = 1;
 [~, startFrame] = firstSignificant(pvInputFunc);
-concAorta = cbPlasma(artInputFunc, pvInputFunc, baseFrame, startFrame);
-concPV = cpPlasma(pvInputFunc, baseFrame, startFrame); 
+concAorta = cbPlasma(artInputFunc, pvInputFunc, startFrame);
+concPV = cpPlasma(pvInputFunc, startFrame); 
 
 % Calculate tau (look at Chouhan's paper for a better implementation)
 [~, i1] = firstSignificant(concAorta);
