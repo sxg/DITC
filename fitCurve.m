@@ -14,8 +14,7 @@ validateattributes(tauP, {'numeric'}, {'scalar'});
 
 opts = optimset('Tolx', 1e-16, 'Tolfun', 1e-10, 'Display', 'off', ...
                 'DiffMinChange', 0.001);
-% x0 = [0.2, 0.2, 10]; % af, dv, mtt
-x0 = [0, 0, 0]; %af, dv, mtt
+x0 = [0.2, 0.2, 10]; % af, dv, mtt
 nData = size(times, 1);
 xdata = [times, ca, cp, repmat(tauA, nData, 1), repmat(tauP, nData, 1)];
 ydata = curve; % alias for readability
