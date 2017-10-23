@@ -26,13 +26,8 @@ concAorta = cbPlasma(artInputFunc, pvInputFunc, startFrame);
 concPV = cpPlasma(pvInputFunc, startFrame); 
 
 % Calculate tau (look at Chouhan's paper for a better implementation)
-[~, i1] = firstSignificant(concAorta);
-[~, i2] = firstSignificant(concPV);
-dt = abs(times(2) - times(1));
-delayFrames = abs(i1 - i2);
-delayTime = delayFrames * dt;
-tauA = delayTime;
-tauP = delayTime;
+tauA = calcTauA(concAorta, concPV, times);
+tauP = tauA;
 
 %% Run the Monte Carlo simulations
 
