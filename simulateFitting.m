@@ -1,5 +1,6 @@
 function [fitCurves, fitErrs, fitPerfParams, fitTime] ...
-    = simulateFitting(noisyCurves, times, artInputFunc, pvInputFunc, snr)
+    = simulateFitting(noisyCurves, times, artInputFunc, pvInputFunc, ...
+    startingPerfParams, snr)
 %simulateFitting Runs Monte Carlo simulations of least squares fitting.
 
 %% Setup
@@ -12,6 +13,8 @@ validateattributes(times, {'numeric'}, ...
 validateattributes(artInputFunc, {'numeric'}, {'column', 'nonempty'});
 validateattributes(pvInputFunc, {'numeric'}, {'column', 'nonempty'});
 validateattributes(snr, {'numeric'}, {'scalar'});
+validateattributes(startingPerfParams, {'numeric'}, ...
+    {'vector', 'nonempty'});
 
 % Create outputs
 nSims = size(noisyCurves, 2);
@@ -39,8 +42,8 @@ for sim = 1:nSims
     noisyCurve = noisyCurves(:, sim);
     tic; % Start the timer
     % Fit the curve
-    [af, dv, mtt, k1a, k1p, k2, err] = fitCurve(noisyCurve, times, ...
-        concAorta, concPV, tauA, tauP);
+    [af, dv, mtt, k1a, k1p, k2, err] = lsFitCurve(noisyCurve, times, ...
+        concAorta, concPV, tauA, tauP, startingPerfParams);
     t = toc; % Stop the timer
     
     % Store the data

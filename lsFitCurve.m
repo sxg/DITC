@@ -1,6 +1,6 @@
-function [af, dv, mtt, k1a, k1p, k2, err] = fitCurve(curve, times, ca, ...
-    cp, tauA, tauP)
-%fitCurve Calculates the best fit curve.
+function [af, dv, mtt, k1a, k1p, k2, err] = lsFitCurve(curve, times, ...
+    ca, cp, tauA, tauP, startingPerfParams)
+%lsFitCurve Calculates the best fit curve using lsqcurvefit.
 
 % Input validation
 validateattributes(curve, {'numeric'}, {'column'});
@@ -10,11 +10,12 @@ validateattributes(ca, {'numeric'}, {'column', 'nonempty'});
 validateattributes(cp, {'numeric'}, {'column', 'nonempty'});
 validateattributes(tauA, {'numeric'}, {'scalar'});
 validateattributes(tauP, {'numeric'}, {'scalar'});
-
+validateattributes(startingPerfParams, {'numeric'}, ...
+    {'vector', 'nonempty'});
 
 opts = optimset('Tolx', 1e-16, 'Tolfun', 1e-10, 'Display', 'off', ...
                 'DiffMinChange', 0.001);
-x0 = [0.2, 0.2, 10]; % af, dv, mtt
+x0 = startingPerfParams; % af, dv, mtt
 nData = size(times, 1);
 xdata = [times, ca, cp, repmat(tauA, nData, 1), repmat(tauP, nData, 1)];
 ydata = curve; % alias for readability
