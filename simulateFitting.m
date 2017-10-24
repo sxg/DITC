@@ -1,6 +1,6 @@
 function [fitCurves, fitErrs, fitPerfParams, fitTime] ...
     = simulateFitting(noisyCurves, times, artInputFunc, pvInputFunc, ...
-    startingPerfParams, snr)
+    startingPerfParams, snr, saveFilePrefix)
 %simulateFitting Runs Monte Carlo simulations of least squares fitting.
 
 %% Setup
@@ -15,6 +15,7 @@ validateattributes(pvInputFunc, {'numeric'}, {'column', 'nonempty'});
 validateattributes(snr, {'numeric'}, {'scalar'});
 validateattributes(startingPerfParams, {'numeric'}, ...
     {'vector', 'nonempty'});
+validateattributes(saveFilePrefix, {'char'}, {'scalartext'});
 
 % Create outputs
 nSims = size(noisyCurves, 2);
@@ -56,7 +57,7 @@ end
 
 %% Save the data
 
-fileName = sprintf('LSFit-SNR-%d.mat', snr);
+fileName = sprintf('%s-SNR-%d.mat', saveFilePrefix, snr);
 save(fileName, 'fitCurves', 'fitErrs', 'fitPerfParams', 'fitTime');
 
 end
