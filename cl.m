@@ -1,19 +1,17 @@
-function [cl] = cl(liver, baseFrame, startFrame)
+function [concLiver] = cl(liverInputFunc, liverStart)
 %cl Contrast concentration in the liver tissue.
 
 alpha = 15 * pi / 180;
 TR = 5.12;
+T10l = 800;
+R10l = 1/T10l;
 relaxivity = 6.3;
 
-% CL calculation
-S0L = mean(Liver(baseFrame:startFrame)) * (1 - exp(-R10L * TR) ...
-    * cos(alpha)) / (1 - exp(-R10L * TR)) / sin(alpha); %GE equation
-R1L = abs(log((S0L * sin(alpha) - liver .* cos(alpha)) ./ (S0L ...
-    * sin(alpha) - Liver)) / TR);
-cl = (R1L - R10L) * 1e3 / relaxivity; % Concentration in liver
-% Normalize the liver SI
-% Unsure if this next line is necessary.
-% CL = CL * 0.2627; %0.2627 = 0.22/mean(CL(end-5:end)); 
+S0l = mean(liverInputFunc(1:liverStart)) ...
+    * (1 - exp(-R10l * TR) * cos(alpha)) / (1 - exp(-R10l * TR)) ...
+    / sin(alpha);
+R1l = abs(log((S0l * sin(alpha) - liverInputFunc .* cos(alpha)) ...
+    ./ (S0l * sin(alpha) - liverInputFunc)) / TR);
+concLiver = (R1l - R10l) * 1e3 / relaxivity;
 
 end
-
