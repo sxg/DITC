@@ -32,6 +32,8 @@ concPV = cpPlasma(pvInputFunc, startFrame);
 % Calculate tauA and tauP
 tauA = calcTauA(concAorta, concPV, times);
 tauP = tauA;
+tauA = 0;
+tauP = 0;
 
 % Get the linear indexes from the mask
 indexList = find(mask);
