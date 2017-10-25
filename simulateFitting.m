@@ -1,6 +1,6 @@
 function [fitCurves, fitErrs, fitPerfParams, fitTime] ...
     = simulateFitting(noisyCurves, times, artInputFunc, pvInputFunc, ...
-    startingPerfParams, snr, saveFilePrefix)
+    startingPerfParams, method, snr, saveFilePrefix)
 %simulateFitting Runs Monte Carlo simulations of least squares fitting.
 
 %% Setup
@@ -15,6 +15,7 @@ validateattributes(pvInputFunc, {'numeric'}, {'column', 'nonempty'});
 validateattributes(snr, {'numeric'}, {'scalar'});
 validateattributes(startingPerfParams, {'numeric'}, ...
     {'vector', 'nonempty'});
+validateattributes(method, {'char'}, {'scalartext'});
 validateattributes(saveFilePrefix, {'char'}, {'scalartext'});
 
 % Create outputs
@@ -43,14 +44,21 @@ for sim = 1:nSims
     noisyCurve = noisyCurves(:, sim);
     tic; % Start the timer
     % Fit the curve
-    [af, dv, mtt, k1a, k1p, k2, err] = lsFitCurve(noisyCurve, times, ...
-        concAorta, concPV, tauA, tauP, startingPerfParams);
+    if strcmp(method, 'fminunc')
+        [af, dv, mtt, k1a, k1p, k2] = fmuFitCurve(noisyCurve, times, ...
+            concAorta, concPV, tauA, tauP, startingPerfParams);
+    elseif strcmp(method, 'lsqcurvefit')
+        [af, dv, mtt, k1a, k1p, k2, err] = lsFitCurve(noisyCurve, times, ...
+            concAorta, concPV, tauA, tauP, startingPerfParams);
+    end
     t = toc; % Stop the timer
     
     % Store the data
     fitCurves(:, sim) = ...
         normc(disc(times, concAorta, concPV, af, dv, mtt, tauA, tauP));
-    fitErrs(sim) = err;
+    if strcmp(method, 'lsqcurvefit')
+        fitErrs(sim) = err;
+    end
     fitPerfParams(:, sim) = [af, dv, mtt, tauA, tauP, k1a, k1p, k2]';
     fitTime(sim) = t;
 end

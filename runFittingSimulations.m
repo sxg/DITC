@@ -1,5 +1,5 @@
 function runFittingSimulations(snrList, times, artInputFunc, ...
-    pvInputFunc, startingPerfParams, saveFilePrefix)
+    pvInputFunc, startingPerfParams, method, saveFilePrefix)
 %runFittingSimulations Runs all of the curve fitting simulations.
 
 % Input validation
@@ -11,6 +11,7 @@ validateattributes(artInputFunc, {'numeric'}, {'column', 'nonempty'});
 validateattributes(pvInputFunc, {'numeric'}, {'column', 'nonempty'});
 validateattributes(startingPerfParams, {'numeric'}, ...
     {'vector', 'nonempty'});
+validateattributes(method, {'char'}, {'scalartext'});
 validateattributes(saveFilePrefix, {'char'}, {'scalartext'});
 
 for i = 1:length(snrList)
@@ -18,7 +19,7 @@ for i = 1:length(snrList)
     noisyCurvesFile = load(sprintf('NoisyCurves-SNR-%d.mat', snr));
     [~, ~, fitPerfParams, fitTime] = ...
         simulateFitting(noisyCurvesFile.noisyCurves, times, ...
-            artInputFunc, pvInputFunc, startingPerfParams, snr, ...
+            artInputFunc, pvInputFunc, startingPerfParams, method, snr, ...
             saveFilePrefix);
     xlswrite(sprintf('%s-SNR-%d.csv', saveFilePrefix, snr), ...
         [fitPerfParams([1:3, 6:8], :)', fitTime']);
