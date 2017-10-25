@@ -1,4 +1,4 @@
-function [cbPlasma] = cbPlasma(AF, PV, startFrame)
+function [cbPlasma] = cbPlasma(AF, PV)
 %cbPlasma Contrast concentration in the arterial plasma.
 
 alpha = 15 * pi / 180;
@@ -8,7 +8,9 @@ R10b = 1/T10b;
 relaxivity = 6.3;
 Hct = 0.4;
 
-S0b = mean(PV(1:startFrame)) * (1 - exp(-R10b * TR) ...
+startFrame = 10;
+
+S0b = mean(PV(2:2+startFrame)) * (1 - exp(-R10b * TR) ...
     * cos(alpha)) / (1 - exp(-R10b * TR)) / sin(alpha);
 R1b = log((S0b * sin(alpha) - AF .* cos(alpha)) ./ (S0b * sin(alpha) ...
     - AF)) / TR;

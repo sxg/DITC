@@ -1,4 +1,4 @@
-function [concLiver] = cl(liverInputFunc, liverStart)
+function [concLiver] = cl(liverInputFunc)
 %cl Contrast concentration in the liver tissue.
 
 alpha = 15 * pi / 180;
@@ -7,7 +7,9 @@ T10l = 800;
 R10l = 1/T10l;
 relaxivity = 6.3;
 
-S0l = mean(liverInputFunc(1:liverStart)) ...
+liverStart = 10;
+
+S0l = mean(liverInputFunc(2:2+liverStart)) ...
     * (1 - exp(-R10l * TR) * cos(alpha)) / (1 - exp(-R10l * TR)) ...
     / sin(alpha);
 R1l = abs(log((S0l * sin(alpha) - liverInputFunc .* cos(alpha)) ...
