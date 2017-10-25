@@ -1,5 +1,5 @@
 function [fitPerfParams] = fitTimeSeries(timeSeries, mask, times, ...
-    artInputFunc, pvInputFunc)
+    artInputFunc, pvInputFunc, startingPerfParams)
 %fitTimeSeries Gets perfusion parameters by least squares curve fitting.
 
 %% Setup
@@ -13,6 +13,8 @@ validateattributes(artInputFunc, {'numeric'}, ...
     {'nonempty', 'column'});
 validateattributes(pvInputFunc, {'numeric'}, ...
     {'nonempty', 'column'});
+validateattributes(startingPerfParams, {'numeric'}, ...
+    {'vector', 'nonempty'});
 
 % Create output
 l = size(timeSeries, 1);
@@ -23,13 +25,15 @@ fitPerfParams = zeros(l, w, d, 8);
 fitCurves = zeros(l, w, d, t);
 
 % Calculate the contrast concentrations
-cA = concArtery(artInputFunc, pvInputFunc);
-cP = concPV(pvInputFunc); 
+[~, startFrame] = firstSignificant(pvInputFunc);
+concAorta = cbPlasma(artInputFunc, pvInputFunc, startFrame);
+concPV = cpPlasma(pvInputFunc, startFrame); 
 
 % Calculate tauA and tauP
-[artStart, ~] = findRise(cA);
-[pvStart, ~] = findRise(cP);
-dt = abs(times(2) - times(1));
+tauA = calcTauA(concAorta, concPV, times);
+tauP = tauA;
+tauA = 0;
+tauP = 0;
 
 % Get the linear indexes from the mask
 indexList = find(mask);
@@ -38,32 +42,22 @@ indexList = find(mask);
 %% Fit the perfusion parameters
 
 dispstat('', 'init');
-tic; % Start the timer
+t = tic; % Start the timer
 for index = 1:length(indexList)
-    dispstat(sprintf('%.2f %%', 100 * (index) / length(indexList)));
+    dispstat(sprintf('%.2f%%', 100 * (index) / length(indexList)));
     voxel = squeeze(timeSeries(i(index), j(index), k(index), :));
-    cL = concLiver(voxel);
-    [liverStart, ~] = findRise(voxel);
-    artDelayFrames = liverStart - artStart;
-    pvDelayFrames = liverStart - pvStart;
-    tauA = min(artDelayFrames * dt, 20.10);
-    tauP = min(pvDelayFrames * dt, 10.05);
-    [af, dv, mtt, k1a, k1p, k2, ~] = fitCurve(cL, times, cA, cP, ...
-        tauA, tauP);
+    [~, startFrame] = firstSignificant(voxel);
+    concLiver = cl(voxel, startFrame);
+    [af, dv, mtt, k1a, k1p, k2, ~] = lsFitCurve(concLiver, times, ...
+        concAorta, concPV, tauA, tauP, startingPerfParams);
     fitPerfParams(i(index), j(index), k(index), :) = ...
         [af, dv, mtt, tauA, tauP, k1a, k1p, k2];
-end
-time = toc; % Stop the timer
-
-% Store the fitted curves
-for index = 1:length(indexList)
-    [af, dv, mtt, tauA, tauP] = ...
-        fitPerfParams(i(index), j(index), k(index), 1:5);
     fitCurves(i(index), j(index), k(index), :) = ...
-        normc(disc(times, ca, cp, af, dv, mtt, tauA, tauP));
+        normc(disc(times, concAorta, concPV, af, dv, mtt, tauA, tauP));
 end
+time = toc(t); % Stop the timer
 
-% Save the data
+%% Save the data
 save('fitPerfuionVolume.mat', ...
     'fitPerfParams', 'fitCurves', 'time');
 
