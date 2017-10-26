@@ -1,8 +1,10 @@
-function [matchPerfParams, time] = matchTimeSeries(timeSeries, mask, ...
-    dict, afRange, dvRange, mttRange, times)
+function [matchPerfParams] = matchTimeSeries(timeSeries, mask, ...
+    dict, afRange, dvRange, mttRange, times, artInputFunc, pvInputFunc)
 %matchTimeSeries Gets perfusion parameters by dictionary matching.
 
 %% Setup
+
+elapsedTime = tic; % Start the timer
 
 % Input validation
 validateattributes(timeSeries, {'numeric'}, {'nonempty', 'nonsparse'});
@@ -24,6 +26,15 @@ w = size(timeSeries, 2);
 d = size(timeSeries, 3);
 t = size(timeSeries, 4);
 
+% Calculate the contrast concentrations
+[~, startFrame] = firstSignificant(pvInputFunc);
+concAorta = cbPlasma(artInputFunc, pvInputFunc, startFrame);
+concPV = cpPlasma(pvInputFunc, startFrame); 
+
+% Calculate tauA and tauP
+tauA = calcTauA(concAorta, concPV, times);
+tauP = tauA;
+
 % Unroll voxels
 voxelIndexes = find(mask);
 [i, j, k] = ind2sub([l, w, d], voxelIndexes);
@@ -33,7 +44,6 @@ nVoxels = size(voxelList, 1);
 nEntries = size(dict, 2);
 
 %% Match the perfusion parameters
-tic; % Start the timer
 
 % Normalize and mean center the data
 nmcVoxelList = normr(voxelList - mean(voxelList, 2));
@@ -43,32 +53,35 @@ nmcDict = normc(dict - mean(dict));
 factors = divisors(nVoxels);
 chunkSize = 1;
 for chunkSize = factors(end:-1:1)
-    if chunkSize * nEntries * 4 / 1e9 < 16
+    % This part is partially hard-coded
+    % 4 = bytes per single (assuming data is of single type)
+    % 16e9 is the amount of RAM on my MBP in bytes
+    if chunkSize * nEntries * 4 < 16e9
         break;
     end
 end
+nChunks = nVoxels / chunkSize;
 
-dispstat('', 'init');
-for chunk = 1:chunkSize:size(nmcVoxelList, 1)
-    dispstat(sprintf('%.2f%%', ...
-        100 * chunk / size(nmcVoxelList, 2)));
-    corrCoefs = nmcVoxelList(chunk:chunk+chunkSize-1, :) ...
-        * nmcDict;
-    save(sprintf('corrCoefs-chunk-%d.mat', chunk), 'corrCoefs');
-end
-
-% Get the perfusion parameters
+% Setup outputs
+chunkMMTime = NaN(nChunks, 1);
+perfParamCalcTime = NaN(nChunks, 1);
 dictIndex = NaN(size(voxelList, 1), 1);
-matchPerfParams = single(NaN(l, w, d, 6));
+matchPerfParams = single(zeros(l, w, d, 6));
+matchCurves = single(zeros(l, w, d, t));
 
-tic;
 dispstat('', 'init');
-for chunk = 1:chunkSize:size(nmcVoxelList, 1)
-    dispstat(sprintf('%.2f%%', 100 * chunk / size(nmcVoxelList, 1)));
-    chunkFile = load(sprintf('corrCoefs-chunk-%d.mat', chunk));
+for chunk = 1:chunkSize:(nChunks * chunkSize)
+    dispstat(sprintf('%.2f%%', 100 * chunk / (nChunks * chunkSize)));
+    
+    % Calculate the correlation coefficients
     chunkRange = chunk:(chunk + chunkSize - 1);
-    [~, dictIndex(chunkRange)] = ...
-        max(chunkFile.corrCoefs, [], 2);
+    t = tic;
+    corrCoefs = nmcVoxelList(chunkRange, :) * nmcDict;
+    chunkMMTime((chunk - 1) / chunkSize + 1) = toc(t);
+    
+    % Get the perfusion parameters
+    u = tic;
+    [~, dictIndex(chunkRange)] = max(corrCoefs, [], 2);
     [iAF, iDV, iMTT] = ind2sub([length(afRange), length(dvRange), ...
         length(mttRange)], dictIndex(chunkRange));
     af = afRange(iAF);
@@ -76,8 +89,7 @@ for chunk = 1:chunkSize:size(nmcVoxelList, 1)
     mtt = mttRange(iMTT);
     
     % Scale the DV value
-    vecLenMatchCurve = ...
-        sqrt(sum(dict(:, dictIndex(chunkRange)).^2));
+    vecLenMatchCurve = sqrt(sum(dict(:, dictIndex(chunkRange)).^2));
     vecLenCurve = sqrt(sum(voxelList(chunkRange, :)'.^2));
     dvScaleFactor = vecLenMatchCurve ./ vecLenCurve;
     dv = dv ./ dvScaleFactor;
@@ -93,10 +105,16 @@ for chunk = 1:chunkSize:size(nmcVoxelList, 1)
         chunkIdx = chunkRange(idx);
         matchPerfParams(i(chunkIdx), j(chunkIdx), k(chunkIdx), :) = ...
             perfParams(idx, :);
+        matchCurves(i(chunkIdx), j(chunkIdx), k(chunkIdx), :) = ...
+            normc(disc(times, concAorta, concPV, af(idx), dv(idx), ...
+            mtt(idx), tauA, tauP));
     end
+    perfParamCalcTime((chunk - 1) / chunkSize + 1) = toc(u);
 end
-toc
 
-time = toc; % Stop the timer
+time = toc(elapsedTime); % Stop the timer
+
+%% Save the data
+save('matchPerfuionVolume.mat', 'matchPerfParams', 'matchCurves', 'time');
 
 end
