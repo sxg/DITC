@@ -27,9 +27,9 @@ d = size(timeSeries, 3);
 t = size(timeSeries, 4);
 
 % Calculate the contrast concentrations
-[~, startFrame] = firstSignificant(pvInputFunc);
-concAorta = cbPlasma(artInputFunc, pvInputFunc, startFrame);
-concPV = cpPlasma(pvInputFunc, startFrame); 
+% [~, startFrame] = firstSignificant(pvInputFunc);
+concAorta = cbPlasma(artInputFunc, pvInputFunc);
+concPV = cpPlasma(pvInputFunc); 
 
 % Calculate tauA and tauP
 tauA = calcTauA(concAorta, concPV, times);
@@ -115,6 +115,7 @@ end
 time = toc(elapsedTime); % Stop the timer
 
 %% Save the data
-save('matchPerfuionVolume.mat', 'matchPerfParams', 'matchCurves', 'time');
+save('matchPerfuionVolume.mat', 'matchPerfParams', ...
+    'matchCurves', 'time', 'chunkMMTime', 'perfParamCalcTime');
 
 end
