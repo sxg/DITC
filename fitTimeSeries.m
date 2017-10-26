@@ -56,7 +56,6 @@ end
 time = toc(t); % Stop the timer
 
 %% Save the data
-save('fitPerfuionVolume.mat', ...
-    'fitPerfParams', 'fitCurves', 'time');
+save('fitPerfuionVolume.mat', 'fitPerfParams', 'fitCurves', 'time');
 
 end
