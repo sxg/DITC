@@ -17,7 +17,7 @@ for i = 1:numCurves
 end
 
 % Save the noisy curves
-save(sprintf('NoisyCurves-SNR-%d.mat', snr), 'noisyCurves');
+save(sprintf('Corrected-NoisyCurves-SNR-%d.mat', snr), 'noisyCurves');
 
 end
 
