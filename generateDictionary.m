@@ -8,13 +8,14 @@ function [ dict ] = generateDictionary( times, artInputFunc, ...
 t = tic; % Start the timer
 
 % Calculate contrast concentrations
-[~, startFrame] = firstSignificant(pvInputFunc);
-concAorta = cbPlasma(artInputFunc, pvInputFunc, startFrame);
-concPV = cpPlasma(pvInputFunc, startFrame);
+concAorta = cbPlasma(artInputFunc, pvInputFunc);
+concPV = cpPlasma(pvInputFunc);
 
 % Calculate tau (look at Chouhan's paper for a better implementation)
 tauA = calcTauA(concAorta, concPV, times);
 tauP = tauA;
+tauA = 0;
+tauP = 0;
 
 % Generate the dictionary
 dispstat('', 'init');
@@ -24,8 +25,8 @@ for iAF = 1:length(afRange)
     for iDV = 1:length(dvRange)
         for iMTT = 1:length(mttRange)
             dispstat(sprintf('%.2f%%', ...
-                100 * (sub2ind([length(afRange), length(dvRange), ...
-                length(mttRange)], iAF, iDV, iMTT)) ...
+                100 * (sub2ind([length(mttRange), length(dvRange), ...
+                length(afRange)], iMTT, iDV, iAF)) ...
                 / (length(afRange) * length(dvRange) * length(mttRange))));
             idx = sub2ind([length(afRange), length(dvRange), ...
                 length(mttRange)], iAF, iDV, iMTT);
