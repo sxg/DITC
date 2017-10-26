@@ -25,9 +25,8 @@ fitPerfParams = zeros(l, w, d, 8);
 fitCurves = zeros(l, w, d, t);
 
 % Calculate the contrast concentrations
-[~, startFrame] = firstSignificant(pvInputFunc);
-concAorta = cbPlasma(artInputFunc, pvInputFunc, startFrame);
-concPV = cpPlasma(pvInputFunc, startFrame); 
+concAorta = cbPlasma(artInputFunc, pvInputFunc);
+concPV = cpPlasma(pvInputFunc); 
 
 % Calculate tauA and tauP
 tauA = calcTauA(concAorta, concPV, times);
@@ -46,8 +45,7 @@ t = tic; % Start the timer
 for index = 1:length(indexList)
     dispstat(sprintf('%.2f%%', 100 * (index) / length(indexList)));
     voxel = squeeze(timeSeries(i(index), j(index), k(index), :));
-    [~, startFrame] = firstSignificant(voxel);
-    concLiver = cl(voxel, startFrame);
+    concLiver = cl(voxel);
     [af, dv, mtt, k1a, k1p, k2, ~] = lsFitCurve(concLiver, times, ...
         concAorta, concPV, tauA, tauP, startingPerfParams);
     fitPerfParams(i(index), j(index), k(index), :) = ...
