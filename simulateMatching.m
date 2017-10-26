@@ -36,18 +36,18 @@ for sim = 1:nSims
     
     % Normalize and mean-center the noisy curve
     noisyCurve = noisyCurves(:, sim);
-    tic; % Start the timer
+    elapsedTime = tic; % Start the timer
     % Match the curve
     [af, dv, mtt, k1a, k1p, k2, index, maxCorrCoef] = ...
         matchCurve(noisyCurve, dict, nmcDict, afRange, dvRange, mttRange);
-    t = toc; % Stop the timer
+    time = toc(elapsedTime); % Stop the timer
     
     % Store the data
     matchCurves(:, sim) = normc(dict(:, index));
     matchCurveIndexes(sim) = index;
     matchPerfParams(:, sim) = [af, dv, mtt, k1a, k1p, k2]';
     matchMaxCorrCoefs(sim) = maxCorrCoef;
-    matchTime(sim) = t;
+    matchTime(sim) = time;
 end
 
 %% Save the data
