@@ -1,5 +1,6 @@
 function [matchPerfParams] = matchTimeSeries(timeSeries, mask, ...
-    dict, afRange, dvRange, mttRange, times, artInputFunc, pvInputFunc)
+    dict, afRange, dvRange, mttRange, times, artInputFunc, pvInputFunc, ...
+    tauA, tauP)
 %matchTimeSeries Gets perfusion parameters by dictionary matching.
 
 %% Setup
@@ -30,10 +31,6 @@ t = size(timeSeries, 4);
 % [~, startFrame] = firstSignificant(pvInputFunc);
 concAorta = cbPlasma(artInputFunc, pvInputFunc);
 concPV = cpPlasma(pvInputFunc); 
-
-% Calculate tauA and tauP
-tauA = calcTauA(concAorta, concPV, times);
-tauP = tauA;
 
 % Unroll voxels
 voxelIndexes = find(mask);
