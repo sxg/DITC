@@ -39,6 +39,9 @@ timeSeries = reshape(timeSeries, [], t);
 voxelList = timeSeries(voxelIndexes, :);
 nVoxels = size(voxelList, 1);
 nEntries = size(dict, 2);
+for idx = 1:nVoxels
+    voxelList(idx, :) = cl(voxelList(idx, :));
+end
 
 %% Match the perfusion parameters
 
