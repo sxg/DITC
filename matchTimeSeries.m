@@ -81,17 +81,15 @@ for chunk = 1:chunkSize:(nChunks * chunkSize)
     % Get the perfusion parameters
     u = tic;
     [~, dictIndex(chunkRange)] = max(corrCoefs, [], 2);
-    [iAF, iDV, iMTT] = ind2sub([length(afRange), length(dvRange), ...
+    [iAF, ~, iMTT] = ind2sub([length(afRange), length(dvRange), ...
         length(mttRange)], dictIndex(chunkRange));
     af = afRange(iAF);
-    dv = dvRange(iDV);
     mtt = mttRange(iMTT);
     
-    % Scale the DV value
+    % Calculate the DV value
     vecLenMatchCurve = sqrt(sum(dict(:, dictIndex(chunkRange)).^2));
     vecLenCurve = sqrt(sum(voxelList(chunkRange, :)'.^2));
-    dvScaleFactor = vecLenCurve ./ vecLenMatchCurve;
-    dv = dv .* dvScaleFactor;
+    dv = vecLenCurve ./ vecLenMatchCurve;
     dv(dv > 1) = 1; % Clamp DV's value between 0 and 1 (known range)
     dv(dv < 0) = 0;
     
