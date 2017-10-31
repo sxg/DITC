@@ -12,8 +12,8 @@ startFrame = 10;
 
 S0p = mean(pvSignal(2:2+startFrame)) * (1 - exp(-R10p * TR) ...
     * cos(alpha)) / (1 - exp(-R10p * TR)) / sin(alpha); %GE equation
-R1p = log((S0p * sin(alpha) - pvSignal .* cos(alpha)) ./ (S0p * sin(alpha) ...
-    - pvSignal)) / TR;
+R1p = log((S0p * sin(alpha) - pvSignal .* cos(alpha)) ./ ...
+    (S0p * sin(alpha) - pvSignal)) / TR;
 % Concentration in portal vein (mM)
 cpArtery = (R1p - R10p) * 1e3 / relaxivity; 
 % Concentration in plasma of portal vein (mM)
