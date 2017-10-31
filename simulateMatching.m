@@ -1,6 +1,6 @@
 function [matchCurves, matchCurveIndexes, matchPerfParams, ...
     matchMaxCorrCoefs, matchTime] = simulateMatching(noisyCurves, dict, ...
-    afRange, dvRange, mttRange, snr, safeFilePrefix)
+    afRange, dvRange, mttRange, snr, saveFilePrefix)
 %simulateDictionary Runs Monte Carlo simulations of dictionary matching.
 
 %% Setup
@@ -16,6 +16,7 @@ validateattributes(dvRange, {'numeric'}, ...
 validateattributes(mttRange, {'numeric'}, ...
     {'row', 'nonempty', 'increasing'});
 validateattributes(snr, {'numeric'}, {'scalar'});
+validateattributes(saveFilePrefix, {'char'}, {'scalartext'});
 
 % Create outputs
 nSims = size(noisyCurves, 2);

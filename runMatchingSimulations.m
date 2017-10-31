@@ -13,6 +13,7 @@ validateattributes(dvRange, {'numeric'}, ...
     {'row', 'nonempty', 'increasing'});
 validateattributes(mttRange, {'numeric'}, ...
     {'row', 'nonempty', 'increasing'});
+validateattributes(saveFilePrefix, {'char'}, {'scalartext'});
 
 for i = 1:length(snrList)
     snr = snrList(i);
