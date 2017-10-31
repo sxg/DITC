@@ -1,5 +1,5 @@
-function [concLiver] = cl(liverInputFunc)
-%cl Contrast concentration in the liver tissue.
+function [contrast] = signal2contrast(signal)
+%cl Contrast concentration for a given signal intensity.
 
 alpha = 15 * pi / 180;
 TR = 5.12;
@@ -14,11 +14,11 @@ Mo = 0.0029;
 % T1l = -TR ./ log(E1l);
 % concLiver = (1 ./ (relaxivity / 1000)) .* ((1 ./ T1l) - (1 ./ T10l));
 
-% Signal --> concentration
-E1 = (liverInputFunc - Mo * sin(alpha)) ./ ...
-    (liverInputFunc .* cos(alpha) - Mo .* sin(alpha));
+% Signal --> contrast
+E1 = (signal - Mo * sin(alpha)) ./ ...
+    (signal .* cos(alpha) - Mo .* sin(alpha));
 T1l = -TR ./ log(E1);
-concLiver = (1 / (relaxivity / 1000)) .* ((1 ./ T1l) - ( 1/ T10l));
+contrast = (1 / (relaxivity / 1000)) .* ((1 ./ T1l) - ( 1/ T10l));
 
 % Original code
 % S0l = mean(liverInputFunc(2:2+liverStart)) ...

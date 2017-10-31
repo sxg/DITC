@@ -1,5 +1,5 @@
-function [ dict ] = generateDictionary( times, artInputFunc, ...
-    pvInputFunc, afRange, dvRange, mttRange )
+function [ dict, time ] = generateDictionary( times, artSignal, ...
+    pvSignal, afRange, dvRange, mttRange )
 %generateDictionary Generates a dictionary of perfusion parameters
 %   generateDictionary generates a 2D matrix of all possible perfusion
 %   curves made by all combinations of perfusion parameters. Inputs are
@@ -8,11 +8,11 @@ function [ dict ] = generateDictionary( times, artInputFunc, ...
 t = tic; % Start the timer
 
 % Calculate contrast concentrations
-concAorta = cbPlasma(artInputFunc, pvInputFunc);
-concPV = cpPlasma(pvInputFunc);
+artContrast = artSignal2contrast(artSignal, pvSignal);
+pvContrast = pvSignal2contrast(pvSignal);
 
 % Calculate tau (look at Chouhan's paper for a better implementation)
-tauA = calcTauA(concAorta, concPV, times);
+tauA = calcTauA(artContrast, pvContrast, times);
 tauP = tauA;
 tauA = 0;
 tauP = 0;
@@ -30,7 +30,7 @@ for iAF = 1:length(afRange)
                 / (length(afRange) * length(dvRange) * length(mttRange))));
             idx = sub2ind([length(afRange), length(dvRange), ...
                 length(mttRange)], iAF, iDV, iMTT);
-            dict(:, idx) = disc(times, concAorta, concPV, afRange(iAF), ...
+            dict(:, idx) = disc(times, artContrast, pvContrast, afRange(iAF), ...
                 dvRange(iDV), mttRange(iMTT), tauA, tauP);
         end
     end

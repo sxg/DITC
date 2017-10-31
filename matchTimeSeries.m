@@ -1,6 +1,6 @@
 function [matchPerfParams] = matchTimeSeries(timeSeries, mask, ...
-    dict, afRange, dvRange, mttRange, times, artInputFunc, pvInputFunc, ...
-    tauA, tauP)
+    dict, afRange, dvRange, mttRange, times, artSignal, pvSignal, tauA, ...
+    tauP)
 %matchTimeSeries Gets perfusion parameters by dictionary matching.
 
 %% Setup
@@ -28,9 +28,8 @@ d = size(timeSeries, 3);
 t = size(timeSeries, 4);
 
 % Calculate the contrast concentrations
-% [~, startFrame] = firstSignificant(pvInputFunc);
-concAorta = cbPlasma(artInputFunc, pvInputFunc);
-concPV = cpPlasma(pvInputFunc); 
+artContrast = artSignal2contrast(artSignal, pvSignal);
+pvContrast = pvSignal2contrast(pvSignal); 
 
 % Unroll voxels
 voxelIndexes = find(mask);
@@ -40,7 +39,7 @@ voxelList = timeSeries(voxelIndexes, :);
 nVoxels = size(voxelList, 1);
 nEntries = size(dict, 2);
 for idx = 1:nVoxels
-    voxelList(idx, :) = cl(voxelList(idx, :));
+    voxelList(idx, :) = signal2contrast(voxelList(idx, :));
 end
 
 %% Match the perfusion parameters
@@ -108,7 +107,7 @@ for chunk = 1:chunkSize:(nChunks * chunkSize)
         matchPerfParams(i(chunkIdx), j(chunkIdx), k(chunkIdx), :) = ...
             perfParams(idx, :);
         matchCurves(i(chunkIdx), j(chunkIdx), k(chunkIdx), :) = ...
-            normc(disc(times, concAorta, concPV, af(idx), dv(idx), ...
+            normc(disc(times, artContrast, pvContrast, af(idx), dv(idx), ...
             mtt(idx), tauA, tauP));
     end
     perfParamCalcTime((chunk - 1) / chunkSize + 1) = toc(u);

@@ -1,17 +1,17 @@
 function [fitCurves, fitErrs, fitPerfParams, fitTime] ...
-    = simulateFitting(noisyCurves, times, artInputFunc, pvInputFunc, ...
+    = simulateFitting(noisyContrastCurves, times, artSignal, pvSignal, ...
     startingPerfParams, method, snr, saveFilePrefix)
 %simulateFitting Runs Monte Carlo simulations of least squares fitting.
 
 %% Setup
 
 % Input validation
-validateattributes(noisyCurves, {'numeric'}, ...
+validateattributes(noisyContrastCurves, {'numeric'}, ...
     {'2d', 'nonempty', 'nonsparse'});
 validateattributes(times, {'numeric'}, ...
     {'column', 'nonempty', 'increasing'});
-validateattributes(artInputFunc, {'numeric'}, {'column', 'nonempty'});
-validateattributes(pvInputFunc, {'numeric'}, {'column', 'nonempty'});
+validateattributes(artSignal, {'numeric'}, {'column', 'nonempty'});
+validateattributes(pvSignal, {'numeric'}, {'column', 'nonempty'});
 validateattributes(snr, {'numeric'}, {'scalar'});
 validateattributes(startingPerfParams, {'numeric'}, ...
     {'vector', 'nonempty'});
@@ -19,15 +19,15 @@ validateattributes(method, {'char'}, {'scalartext'});
 validateattributes(saveFilePrefix, {'char'}, {'scalartext'});
 
 % Create outputs
-nSims = size(noisyCurves, 2);
-fitCurves = NaN(size(noisyCurves));
+nSims = size(noisyContrastCurves, 2);
+fitCurves = NaN(size(noisyContrastCurves));
 fitErrs = NaN(1, nSims);
 fitPerfParams = NaN(8, nSims); % af, dv, mtt, k1a, k1p, k2 (in order)
 fitTime = NaN(1, nSims);
 
 % Calculate the contrast concentrations
-concAorta = cbPlasma(artInputFunc, pvInputFunc);
-concPV = cpPlasma(pvInputFunc); 
+artContrast = artSignal2contrast(artSignal, pvSignal);
+pvContrast = pvSignal2contrast(pvSignal); 
 
 % Calculate tau (look at Chouhan's paper for a better implementation)
 % tauA = calcTauA(concAorta, concPV, times);
@@ -42,21 +42,23 @@ for sim = 1:nSims
     dispstat(sprintf('%d %%', round(sim / nSims * 100)));
     
     % Get the noisy curve
-    noisyCurve = noisyCurves(:, sim);
+    noisyCurve = noisyContrastCurves(:, sim);
     tic; % Start the timer
     % Fit the curve
     if strcmp(method, 'fminunc')
         [af, dv, mtt, k1a, k1p, k2] = fmuFitCurve(noisyCurve, times, ...
-            concAorta, concPV, tauA, tauP, startingPerfParams);
+            artContrast, pvContrast, tauA, tauP, startingPerfParams);
     elseif strcmp(method, 'lsqcurvefit')
-        [af, dv, mtt, k1a, k1p, k2, err] = lsFitCurve(noisyCurve, times, ...
-            concAorta, concPV, tauA, tauP, startingPerfParams);
+        [af, dv, mtt, k1a, k1p, k2, err] = lsFitCurve(noisyCurve, ...
+            times, artContrast, pvContrast, tauA, tauP, ...
+            startingPerfParams);
     end
     t = toc; % Stop the timer
     
     % Store the data
     fitCurves(:, sim) = ...
-        normc(disc(times, concAorta, concPV, af, dv, mtt, tauA, tauP));
+        normc(disc(times, artContrast, pvContrast, af, dv, mtt, tauA, ...
+        tauP));
     if strcmp(method, 'lsqcurvefit')
         fitErrs(sim) = err;
     end

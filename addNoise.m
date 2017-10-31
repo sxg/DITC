@@ -13,7 +13,7 @@ noisyContrastCurves = NaN(size(signal, 1), numSignals);
 % Generate noisy signals
 for i = 1:numSignals
     noisySignals(:, i) = awgn(signal, snr, 'measured');
-    noisyContrastCurves(:, i) = abs(cl(noisySignals(:, i)));
+    noisyContrastCurves(:, i) = abs(signal2contrast(noisySignals(:, i)));
     % Alternative approach specified by Katie
     % noisySignals = signal + randn(size(signal)) * snr;
 end
