@@ -1,6 +1,6 @@
 function [matchCurves, matchCurveIndexes, matchPerfParams, ...
     matchMaxCorrCoefs, matchTime] = simulateMatching(noisyCurves, dict, ...
-    afRange, dvRange, mttRange, snr)
+    afRange, dvRange, mttRange, snr, safeFilePrefix)
 %simulateDictionary Runs Monte Carlo simulations of dictionary matching.
 
 %% Setup
@@ -52,7 +52,7 @@ end
 
 %% Save the data
 
-fileName = sprintf('DictMatch-SNR-%d.mat', snr);
+fileName = sprintf('%s-DictMatch-SNR-%d.mat', saveFilePrefix, snr);
 save(fileName, 'matchCurves', 'matchCurveIndexes', 'matchPerfParams', ...
     'matchMaxCorrCoefs', 'matchTime');
 
