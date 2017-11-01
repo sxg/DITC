@@ -20,15 +20,17 @@ corrCoefs = normc(curve - mean(curve))' * nmcDict;
 %% Get the perfusion parameters
 % Get the max correlation coefficient and its associated index
 [maxCorrCoef, index] = max(corrCoefs);
-[iAF, ~, iMTT] = ind2sub([length(afRange), length(dvRange), ...
+[iAF, iDV, iMTT] = ind2sub([length(afRange), length(dvRange), ...
     length(mttRange)], index);
 af = afRange(iAF);
+dv = dvRange(iDV);
 mtt = mttRange(iMTT);
 
-% Calculate the DV value
+% Scale the DV value
 vecLenMatchCurve = sqrt(sum(dict(:, index).^2));
 vecLenCurve = sqrt(sum(curve.^2));
-dv = vecLenCurve / vecLenMatchCurve;
+dvScaleFactor = vecLenCurve / vecLenMatchCurve;
+dv = dv * dvScaleFactor;
 dv(dv > 1) = 1; % Clamp DV's value between 0 and 1 (known range)
 dv(dv < 0) = 0;
 
