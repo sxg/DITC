@@ -1,5 +1,5 @@
 function [handle] = plotRMSEVsSNR(allNoisyCurves, allCurves, snrList, ...
-    lineColor, titleName)
+    lineColor)
 %plotRMSEVsSNR Plots RMSE vs. SNR.
 
 % Input validation
@@ -11,7 +11,6 @@ validateattributes(allNoisyCurves, {'numeric'}, ...
     {'size', [nTimePoints, nSims, nSNRs]});
 validateattributes(allCurves, {'numeric'}, ...
     {'size', [nTimePoints, nSims, nSNRs]});
-validateattributes(titleName, {'char'}, {'scalartext'});
 
 % Setup variables
 rmseList = NaN(nSims, nSNRs);
@@ -34,9 +33,8 @@ handle = errorbar(snrList, meanRMSE, stdRMSE, 'Color', lineColor, ...
     'LineStyle', 'none');
 plot(snrList, meanRMSE, 'Color', lineColor, 'LineWidth', lineWidth);
 axis([snrList(1), snrList(end), 0, 1]);
-xlabel('SNR', 'FontSize', 18);
-ylabel('RMSE', 'FontSize', 18);
-title(titleName, 'FontSize', 24);
+xlabel('SNR', 'FontSize', 22);
+ylabel('RMSE', 'FontSize', 22);
 
 end
 
