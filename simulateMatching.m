@@ -1,12 +1,12 @@
 function [matchCurves, matchCurveIndexes, matchPerfParams, ...
-    matchMaxCorrCoefs, matchTime] = simulateMatching(noisyCurves, dict, ...
+    matchMaxCorrCoefs, matchTime] = simulateMatching(noisyContrast, dict, ...
     afRange, dvRange, mttRange, snr, saveFilePrefix)
 %simulateDictionary Runs Monte Carlo simulations of dictionary matching.
 
 %% Setup
 
 % Input validation
-validateattributes(noisyCurves, {'numeric'}, ...
+validateattributes(noisyContrast, {'numeric'}, ...
     {'2d', 'nonempty', 'nonsparse'});
 validateattributes(dict, {'numeric'}, {'2d', 'nonempty', 'nonsparse'});
 validateattributes(afRange, {'numeric'}, ...
@@ -19,8 +19,8 @@ validateattributes(snr, {'numeric'}, {'scalar'});
 validateattributes(saveFilePrefix, {'char'}, {'scalartext'});
 
 % Create outputs
-nSims = size(noisyCurves, 2);
-matchCurves = NaN(size(noisyCurves));
+nSims = size(noisyContrast, 2);
+matchCurves = NaN(size(noisyContrast));
 matchCurveIndexes = NaN(nSims, 1);
 matchPerfParams = NaN(6, nSims); % af, dv, mtt, k1a, k1p, k2 (in order)
 matchMaxCorrCoefs = NaN(nSims, 1);
@@ -36,7 +36,7 @@ for sim = 1:nSims
     dispstat(sprintf('%d %%', round(sim / nSims * 100)));
     
     % Normalize and mean-center the noisy curve
-    noisyCurve = noisyCurves(:, sim);
+    noisyCurve = noisyContrast(:, sim);
     elapsedTime = tic; % Start the timer
     % Match the curve
     [af, dv, mtt, k1a, k1p, k2, index, maxCorrCoef] = ...
