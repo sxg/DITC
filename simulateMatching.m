@@ -44,7 +44,7 @@ for sim = 1:nSims
     time = toc(elapsedTime); % Stop the timer
     
     % Store the data
-    matchCurves(:, sim) = normc(dict(:, index));
+    matchCurves(:, sim) = dict(:, index);
     matchCurveIndexes(sim) = index;
     matchPerfParams(:, sim) = [af, dv, mtt, k1a, k1p, k2]';
     matchMaxCorrCoefs(sim) = maxCorrCoef;
