@@ -1,5 +1,5 @@
 function runMatchingSimulations(snrList, dict, afRange, dvRange, ...
-    mttRange, saveFilePrefix)
+    mttRange, tauA, tauP, times, artSignal, pvSignal, saveFilePrefix)
 %runMatchingSimulations Runs all of the dictionary matching simulations.
 
 % Input validation
@@ -20,7 +20,8 @@ for i = 1:length(snrList)
     noisyDataFile = load(sprintf('NoisyContrast-SNR-%d.mat', snr));
     [~, ~, matchPerfParams, ~, matchTime] = ...
         simulateMatching(noisyDataFile.noisyContrastCurves, dict, ...
-        afRange, dvRange, mttRange, snr, saveFilePrefix);
+        afRange, dvRange, mttRange, tauA, tauP, times, artSignal, ...
+        pvSignal, snr, saveFilePrefix);
     xlswrite(sprintf('%s-DictMatch-SNR-%d.csv', saveFilePrefix, snr), ...
         [matchPerfParams', matchTime]);
 end

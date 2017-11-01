@@ -33,16 +33,6 @@ dvScaleFactor = vecLenCurve / vecLenMatchCurve;
 dv = dv * dvScaleFactor;
 dv(dv > 1) = 1; % Clamp DV's value between 0 and 1 (known range)
 dv(dv < 0 | isnan(dv)) = 0;
-dvStep = range(dvRange) / (numel(dvRange) - 1);
-dv = round(dv / dvStep) * dvStep;
-
-% Update the index to reflect the calculated DV value
-% Index obtained this way due to rounding errors with doubles
-[~, iAF] = min(abs(afRange - af));
-[~, iDV] = min(abs(dvRange - dv));
-[~, iMTT] = min(abs(mttRange - mtt));
-index = sub2ind([length(afRange), length(dvRange), length(mttRange)], ...
-    iAF, iDV, iMTT);
 
 % Formula's taken from Yong's 2015 perfusion paper
 k1a = af * dv / mtt;

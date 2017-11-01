@@ -1,6 +1,7 @@
 function [matchCurves, matchCurveIndexes, matchPerfParams, ...
-    matchMaxCorrCoefs, matchTime] = simulateMatching(noisyContrast, dict, ...
-    afRange, dvRange, mttRange, snr, saveFilePrefix)
+    matchMaxCorrCoefs, matchTime] = simulateMatching(noisyContrast, ...
+    dict, afRange, dvRange, mttRange, tauA, tauP, times, artSignal, ...
+    pvSignal, snr, saveFilePrefix)
 %simulateDictionary Runs Monte Carlo simulations of dictionary matching.
 
 %% Setup
@@ -26,6 +27,10 @@ matchPerfParams = NaN(6, nSims); % af, dv, mtt, k1a, k1p, k2 (in order)
 matchMaxCorrCoefs = NaN(nSims, 1);
 matchTime = NaN(nSims, 1);
 
+% Calculate the contrast concentrations
+artContrast = artSignal2contrast(artSignal, pvSignal);
+pvContrast = pvSignal2contrast(pvSignal); 
+
 % Generate a normalized, mean-centered dictionary
 nmcDict = normc(dict - mean(dict));
 
@@ -44,7 +49,8 @@ for sim = 1:nSims
     time = toc(elapsedTime); % Stop the timer
     
     % Store the data
-    matchCurves(:, sim) = dict(:, index);
+    matchCurves(:, sim) = disc(times, artContrast, pvContrast, af, dv, ...
+        mtt, tauA, tauP);
     matchCurveIndexes(sim) = index;
     matchPerfParams(:, sim) = [af, dv, mtt, k1a, k1p, k2]';
     matchMaxCorrCoefs(sim) = maxCorrCoef;
