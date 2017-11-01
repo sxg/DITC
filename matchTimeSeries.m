@@ -1,6 +1,6 @@
 function [matchPerfParams] = matchTimeSeries(timeSeries, mask, ...
-    dict, afRange, dvRange, mttRange, times, artSignal, pvSignal, tauA, ...
-    tauP)
+    dict, afRange, dvRange, mttRange, tauA, tauP, times, artSignal, ...
+    pvSignal)
 %matchTimeSeries Gets perfusion parameters by dictionary matching.
 
 %% Setup
@@ -91,7 +91,7 @@ for chunk = 1:chunkSize:(nChunks * chunkSize)
     vecLenCurve = sqrt(sum(voxelList(chunkRange, :)'.^2));
     dv = vecLenCurve ./ vecLenMatchCurve;
     dv(dv > 1) = 1; % Clamp DV's value between 0 and 1 (known range)
-    dv(dv < 0) = 0;
+    dv(dv < 0 | isnan(dv)) = 0;
     
     % Formula's taken from Yong's 2015 perfusion paper
     k1a = af .* dv ./ mtt;
