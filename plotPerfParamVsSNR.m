@@ -1,5 +1,5 @@
-function [handle] = plotPerfParamVsSNR(perfParams, snrList, titleName, ...
-    yAxisLabel, yAxisLimits, trueValue)
+function [handle] = plotPerfParamVsSNR(perfParams, snrList, lineColor, ...
+    titleName, yAxisLabel, yAxisLimits, trueValue)
 %plotPerfParamVsSNR Plots RMSE vs. SNR.
 
 % Input validation
@@ -11,23 +11,21 @@ validateattributes(titleName, {'char'}, {'scalartext'});
 validateattributes(yAxisLabel, {'char'}, {'scalartext'});
 validateattributes(yAxisLimits, {'numeric'}, {'row', 'increasing'});
 
-% Setup variables
-meanPerfParam = NaN(1, nSNRs);
-stdPerfParam = NaN(1, nSNRs);
-
 % Calculate perfusion parameters stats
 meanPerfParam = nanmean(perfParams);
 stdPerfParam = nanstd(perfParams);
 
 % Plot RMSE vs. SNR
+lineWidth = 2;
 hold on;
-handle = errorbar(snrList, meanPerfParam, stdPerfParam, 'r', ...
-    'LineStyle', 'none');
-plot(snrList, meanPerfParam);
+handle = errorbar(snrList, meanPerfParam, stdPerfParam, ...
+    'Color', lineColor, 'LineStyle', 'none');
+plot(snrList, meanPerfParam, 'Color', lineColor, 'LineWidth', lineWidth);
 axis([snrList(1), snrList(end), yAxisLimits]);
 xlabel('SNR', 'FontSize', 18);
 ylabel(yAxisLabel, 'FontSize', 18);
-line([0, 100], [trueValue, trueValue], 'Color', 'green');
+line([0, 100], [trueValue, trueValue], ...
+    'Color', 'black', 'LineWidth', 1);
 title(titleName, 'FontSize', 24);
 
 end
