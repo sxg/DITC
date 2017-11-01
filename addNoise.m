@@ -1,26 +1,23 @@
-function [noisySignals] = addNoise(signal, numSignals, snr)
-%addNoise Adds random noise to a signal.
+function [noisyContrastCurves] = addNoise(contrast, nSims, snr)
+%addNoise Adds random noise to a contrast curve.
 
 % Input validation
-validateattributes(signal, {'numeric'}, {'column', 'nonempty'});
-validateattributes(numSignals, {'numeric'}, {'scalar'});
+validateattributes(contrast, {'numeric'}, {'column', 'nonempty'});
+validateattributes(nSims, {'numeric'}, {'scalar'});
 validateattributes(snr, {'numeric'}, {'scalar'});
 
 % Create the outputs
-noisySignals = NaN(size(signal, 1), numSignals);
-noisyContrastCurves = NaN(size(signal, 1), numSignals);
+noisyContrastCurves = NaN(size(contrast, 1), nSims);
 
 % Generate noisy signals
-for i = 1:numSignals
-    noisySignals(:, i) = awgn(signal, snr, 'measured');
-    noisyContrastCurves(:, i) = abs(signal2contrast(noisySignals(:, i)));
+for i = 1:nSims
+    noisyContrastCurves(:, i) = awgn(contrast, snr, 'measured');
     % Alternative approach specified by Katie
     % noisySignals = signal + randn(size(signal)) * snr;
 end
 
 % Save the noisy signals
-save(sprintf('NoisyData-SNR-%d.mat', snr), 'noisySignals', ...
-    'noisyContrastCurves', 'signal');
+save(sprintf('NoisyContrast-SNR-%d.mat', snr), 'noisyContrastCurves', 'contrast');
 
 end
 

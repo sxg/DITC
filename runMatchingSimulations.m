@@ -17,7 +17,7 @@ validateattributes(saveFilePrefix, {'char'}, {'scalartext'});
 
 for i = 1:length(snrList)
     snr = snrList(i);
-    noisyDataFile = load(sprintf('NoisyData-SNR-%d.mat', snr));
+    noisyDataFile = load(sprintf('NoisyContrast-SNR-%d.mat', snr));
     [~, ~, matchPerfParams, ~, matchTime] = ...
         simulateMatching(noisyDataFile.noisyContrastCurves, dict, ...
         afRange, dvRange, mttRange, snr, saveFilePrefix);
