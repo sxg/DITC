@@ -1,5 +1,5 @@
 function [fitPerfParams] = fitTimeSeries(timeSeries, mask, times, ...
-    artInputFunc, pvInputFunc, startingPerfParams)
+    artSignal, pvSignal, startingPerfParams)
 %fitTimeSeries Gets perfusion parameters by least squares curve fitting.
 
 %% Setup
@@ -9,9 +9,9 @@ validateattributes(timeSeries, {'numeric'}, {'nonempty', 'nonsparse'});
 validateattributes(mask, {'numeric'}, {'nonempty', 'binary'});
 validateattributes(times, {'numeric'}, ...
     {'nonempty', 'column', 'increasing'});
-validateattributes(artInputFunc, {'numeric'}, ...
+validateattributes(artSignal, {'numeric'}, ...
     {'nonempty', 'column'});
-validateattributes(pvInputFunc, {'numeric'}, ...
+validateattributes(pvSignal, {'numeric'}, ...
     {'nonempty', 'column'});
 validateattributes(startingPerfParams, {'numeric'}, ...
     {'vector', 'nonempty'});
@@ -25,8 +25,8 @@ fitPerfParams = zeros(l, w, d, 8);
 fitCurves = zeros(l, w, d, t);
 
 % Calculate the contrast concentrations
-artContrast = artSignal2contrast(artInputFunc, pvInputFunc);
-pvContrast = pvSignal2contrast(pvInputFunc); 
+artContrast = artSignal2contrast(artSignal, pvSignal);
+pvContrast = pvSignal2contrast(pvSignal); 
 
 % Calculate tauA and tauP
 tauA = calcTauA(artContrast, pvContrast, times);
