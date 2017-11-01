@@ -29,8 +29,10 @@ mtt = mttRange(iMTT);
 % Scale the DV value
 vecLenMatchCurve = sqrt(sum(dict(:, index).^2));
 vecLenCurve = sqrt(sum(curve.^2));
-dvScaleFactor = vecLenMatchCurve / vecLenCurve;
-dv = dv / dvScaleFactor;
+dvScaleFactor = vecLenCurve / vecLenMatchCurve;
+dv = dv * dvScaleFactor;
+dv(dv > 1) = 1; % Clamp DV's value between 0 and 1 (known range)
+dv(dv < 0) = 0;
 
 % Formula's taken from Yong's 2015 perfusion paper
 k1a = af * dv / mtt;
