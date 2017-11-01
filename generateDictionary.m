@@ -33,7 +33,7 @@ end
 
 time = toc(t);
 
-save(sprintf('%s.mat', dictName), 'dict', 'time', 'artSignal', ...
+save(sprintf('%s.mat', dictName), 'dict', 'time', 'times', 'artSignal', ...
     'pvSignal', 'afRange', 'dvRange', 'mttRange', 'tauA', 'tauP');
 
 end
