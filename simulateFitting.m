@@ -57,8 +57,8 @@ for sim = 1:nSims
     
     % Store the data
     fitCurves(:, sim) = ...
-        normc(disc(times, artContrast, pvContrast, af, dv, mtt, tauA, ...
-        tauP));
+        disc(times, artContrast, pvContrast, af, dv, mtt, tauA, ...
+        tauP);
     if strcmp(method, 'lsqcurvefit')
         fitErrs(sim) = err;
     end
