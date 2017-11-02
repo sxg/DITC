@@ -1,15 +1,14 @@
-function [handle] = plotRMSEVsSNR(allNoisyCurves, allCurves, snrList, ...
+function [handle] = plotRMSEVsSNR(idealCurve, estimatedCurves, snrList, ...
     lineColor)
 %plotRMSEVsSNR Plots RMSE vs. SNR.
 
 % Input validation
-nSims = size(allNoisyCurves, 2);
-nTimePoints = size(allNoisyCurves, 1);
+nSims = size(estimatedCurves, 2);
+nTimePoints = size(idealCurve, 1);
 nSNRs = length(snrList);
 validateattributes(snrList, {'numeric'}, {'vector', 'nonempty'});
-validateattributes(allNoisyCurves, {'numeric'}, ...
-    {'size', [nTimePoints, nSims, nSNRs]});
-validateattributes(allCurves, {'numeric'}, ...
+validateattributes(idealCurve, {'numeric'}, {'column'});
+validateattributes(estimatedCurves, {'numeric'}, ...
     {'size', [nTimePoints, nSims, nSNRs]});
 
 % Setup variables
@@ -17,10 +16,8 @@ rmseList = NaN(nSims, nSNRs);
 
 % Calculate RMSEs
 for i = 1:nSNRs
-    noisyCurves = allNoisyCurves(:, :, i);
-    curves = allCurves(:, :, i);
     for j = 1:nSims
-        rmseList(j, i) = rmse(noisyCurves(:, j), curves(:, j));
+        rmseList(j, i) = rmse(idealCurve, estimatedCurves(:, j, i));
     end
 end
 meanRMSE = nanmean(rmseList);
