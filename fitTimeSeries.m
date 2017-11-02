@@ -1,5 +1,5 @@
 function [fitPerfParams] = fitTimeSeries(timeSeries, mask, times, ...
-    artSignal, pvSignal, startingPerfParams)
+    artSignal, pvSignal, startingPerfParams, saveFileSuffix)
 %fitTimeSeries Gets perfusion parameters by least squares curve fitting.
 
 %% Setup
@@ -56,6 +56,7 @@ end
 time = toc(t); % Stop the timer
 
 %% Save the data
-save('fitPerfuionVolume.mat', 'fitPerfParams', 'fitCurves', 'time');
+save(sprintf('fitPerfuionVolume-%s.mat', saveFileSuffix), ...
+    'fitPerfParams', 'fitCurves', 'time');
 
 end

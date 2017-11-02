@@ -1,6 +1,6 @@
 function [matchPerfParams] = matchTimeSeries(timeSeries, mask, ...
     dict, afRange, dvRange, mttRange, tauA, tauP, times, artSignal, ...
-    pvSignal)
+    pvSignal, saveFileSuffix)
 %matchTimeSeries Gets perfusion parameters by dictionary matching.
 
 %% Setup
@@ -114,7 +114,8 @@ end
 time = toc(elapsedTime); % Stop the timer
 
 %% Save the data
-save('matchPerfuionVolume.mat', 'matchPerfParams', ...
-    'matchCurves', 'time', 'chunkMMTime', 'perfParamCalcTime');
+save(sprintf('matchPerfuionVolume-%s.mat', saveFileSuffix), ...
+    'matchPerfParams', 'matchCurves', 'time', 'chunkMMTime', ...
+    'perfParamCalcTime');
 
 end
