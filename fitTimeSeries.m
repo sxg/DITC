@@ -1,5 +1,5 @@
 function [fitPerfParams] = fitTimeSeries(timeSeries, mask, times, ...
-    artSignal, pvSignal, startingPerfParams, saveFileSuffix)
+    artSignal, pvSignal, startingPerfParams, tauA, tauP, saveFileSuffix)
 %fitTimeSeries Gets perfusion parameters by least squares curve fitting.
 
 %% Setup
@@ -29,10 +29,8 @@ artContrast = artSignal2contrast(artSignal, pvSignal);
 pvContrast = pvSignal2contrast(pvSignal); 
 
 % Calculate tauA and tauP
-tauA = calcTauA(artContrast, pvContrast, times);
-tauP = tauA;
-tauA = 0;
-tauP = 0;
+% tauA = calcTauA(artContrast, pvContrast, times);
+% tauP = tauA;
 
 % Get the linear indexes from the mask
 indexList = find(mask);
