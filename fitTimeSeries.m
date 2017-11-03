@@ -54,7 +54,7 @@ end
 time = toc(t); % Stop the timer
 
 %% Save the data
-save(sprintf('fitPerfuionVolume-%s.mat', saveFileSuffix), ...
+save(sprintf('fitPerfusionVolume-%s.mat', saveFileSuffix), ...
     'fitPerfParams', 'fitCurves', 'time');
 
 end
