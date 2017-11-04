@@ -32,7 +32,8 @@ pvContrast = pvSignal2contrast(pvSignal, flipAngle, TR, T10p, ...
 % Get the linear indexes from the mask
 voxelIndexes = find(mask);
 [i, j, k] = ind2sub([l, w, d], voxelIndexes);
-voxelList(voxelIndexes, :) = timeSeries(i, j, k, :);
+timeSeries = reshape(timeSeries, [], t);
+voxelList = timeSeries(voxelIndexes, :);
 nVoxels = size(voxelList, 1);
 
 %% Fit the perfusion parameters
