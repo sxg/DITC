@@ -38,8 +38,8 @@ nVoxels = size(voxelList, 1);
 
 %% Fit the perfusion parameters
 
-parfor_progress(nVoxels);
 t = tic; % Start the timer
+parfor_progress(nVoxels);
 parfor index = 1:nVoxels
     voxel = voxelList(index, :);
     contrast = signal2contrast(voxel, flipAngle, TR, T10l, relaxivity, ...
@@ -51,8 +51,8 @@ parfor index = 1:nVoxels
         [artContrast, pvContrast, times]));
     parfor_progress;
 end
-time = toc(t); % Stop the timer
 parfor_progress(0);
+time = toc(t); % Stop the timer
 
 fitPerfParams(i, j, k, :) = fitPerfParamsList(voxelIndexes, :);
 fitCurves(i, j, k, :) = fitCurvesList(voxelIndexes, :);
