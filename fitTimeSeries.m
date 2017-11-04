@@ -1,5 +1,6 @@
 function [fitPerfParams] = fitTimeSeries(timeSeries, mask, times, ...
-    artSignal, pvSignal, saveFileSuffix)
+    artSignal, pvSignal, flipAngle, TR, T10b, T10p, T10l, relaxivity, ...
+    scaleFactor, startFrame, endFrame, saveFileSuffix)
 %fitTimeSeries Gets perfusion parameters by least squares curve fitting.
 
 %% Setup
@@ -23,8 +24,10 @@ fitPerfParams = zeros(l, w, d, 7);
 fitCurves = zeros(l, w, d, t);
 
 % Calculate the contrast concentrations
-artContrast = artSignal2contrast(artSignal, pvSignal);
-pvContrast = pvSignal2contrast(pvSignal); 
+artContrast = artSignal2contrast(artSignal, pvSignal, flipAngle, TR, ...
+    T10b, relaxivity, startFrame, endFrame);
+pvContrast = pvSignal2contrast(pvSignal, flipAngle, TR, T10p, ...
+    relaxivity, startFrame, endFrame); 
 
 % Get the linear indexes from the mask
 indexList = find(mask);
@@ -35,9 +38,17 @@ indexList = find(mask);
 dispstat('', 'init');
 t = tic; % Start the timer
 for index = 1:length(indexList)
-    dispstat(sprintf('%.2f%%', 100 * (index) / length(indexList)));
+    progress = index / length(indexList);
+    elapsedTime = toc(t) / 60;
+    estimatedTime = elapsedTime / progress;
+    dispstat(sprintf( ...
+        ['Progress: %.2f%%\n' ...
+        'Elapsed Time: %.2f min\n' ...
+        'Estimated Time: %.2f min'], ...
+        100 * progress, elapsedTime, estimatedTime));
     voxel = squeeze(timeSeries(i(index), j(index), k(index), :));
-    contrast = signal2contrast(voxel);
+    contrast = signal2contrast(voxel, flipAngle, TR, T10l, relaxivity, ...
+         scaleFactor, startFrame, endFrame);
     [f, ps, v2, af, v1, t1, tauA, ~] = lsFitCurve(contrast, times, ...
         artContrast, pvContrast);
     fitPerfParams(i(index), j(index), k(index), :) = ...
