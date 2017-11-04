@@ -1,8 +1,6 @@
-function [ y ] = R( t, t1, PS, F, v2 )
-%R Summary of this function goes here
-%   Detailed explanation goes here
+function [ y ] = r( t, t1, ps, f, v2 )
 
-y = R1(t, t1) + R2(t - t1, PS, F, v2);
+y = r1(t, t1) + r2(t - t1, ps, f, v2);
 
 end
 
