@@ -21,7 +21,9 @@ w = size(timeSeries, 2);
 d = size(timeSeries, 3);
 t = size(timeSeries, 4);
 fitPerfParamsList = zeros(l * w * d, 8);
+fitPerfParams = zeros(l, w, d, 8);
 fitCurvesList = zeros(l * w * d, t);
+fitCurves = zeros(l, w, d, t);
 
 % Calculate the contrast concentrations
 artContrast = artSignal2contrast(artSignal, pvSignal, flipAngle, TR, ...
@@ -56,7 +58,7 @@ time = toc(t); % Stop the timer
 
 for index = 1:nVoxels
     fitPerfParams(i(index), j(index), k(index), :) = ...
-        fitPerfParamsList(voxelIndexes(index), :);
+        fitPerfParamsList(index, :);
 %     fitCurves(i(index), j(index), k(index), :) = ...
 %         fitCurvesList(voxelIndexes(index), :);
 end
