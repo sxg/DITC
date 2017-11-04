@@ -1,4 +1,4 @@
-function [f, ps, v2, af, v1, t1, tauA, err] = lsFitCurve(curve, times, ...
+function [f, ps, v2, af, v1, t1, e, tauA, err] = lsFitCurve(curve, times, ...
     artContrast, pvContrast)
 %lsFitCurve Calculates the best fit curve using lsqcurvefit.
 
@@ -17,13 +17,14 @@ x0 = [1.3, 0.5, 0.2, 0.5, 0.2, 0.006]; %f, ps, v2, af, v1, tauA
 lb = [0.167, 0.01, 0.01, 0.01, 0.004, 0];
 ub = [2.5, 1, 0.4, 1, 0.4, 0.010];
 [x, err] = lsqcurvefit(@ditc, x0, xdata, ydata, lb, ub, opts);
-f = x(1);
-ps = x(2);
-v2 = x(3);
-af = x(4);
-v1 = x(5);
-tauA = x(6);
-t1 = v1 / f;
+f = x(1) * 60;
+ps = x(2) * 60;
+v2 = x(3) * 100;
+af = x(4) * 100;
+v1 = x(5) * 100;
+tauA = x(6) * 1000;
+t1 = v1 / f * 100;
+e = 1 - exp(-ps / f) * 100;
 
 end
 

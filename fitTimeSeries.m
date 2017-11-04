@@ -20,7 +20,7 @@ l = size(timeSeries, 1);
 w = size(timeSeries, 2);
 d = size(timeSeries, 3);
 t = size(timeSeries, 4);
-fitPerfParamsList = zeros(l * w * d, 7);
+fitPerfParamsList = zeros(l * w * d, 8);
 fitCurvesList = zeros(l * w * d, t);
 
 % Calculate the contrast concentrations
@@ -44,21 +44,25 @@ parfor index = 1:nVoxels
     voxel = voxelList(index, :);
     contrast = signal2contrast(voxel, flipAngle, TR, T10l, relaxivity, ...
          scaleFactor, startFrame, addFrames);
-    [f, ps, v2, af, v1, t1, tauA, ~] = lsFitCurve(contrast', times, ...
+    [f, ps, v2, af, v1, t1, e, tauA, ~] = lsFitCurve(contrast', times, ...
         artContrast, pvContrast);
-    fitPerfParamsList(index, :) = [f, ps, v2, af, v1, t1, tauA];
-    fitCurvesList(index, :) = normc(ditc([f, ps, v2, af, v1, tauA], ...
-        [artContrast, pvContrast, times]));
+    fitPerfParamsList(index, :) = [f, ps, v2, af, v1, t1, e, tauA];
+%     fitCurvesList(index, :) = normc(ditc([f, ps, v2, af, v1, tauA], ...
+%         [artContrast, pvContrast, times]));
     parfor_progress;
 end
 parfor_progress(0);
 time = toc(t); % Stop the timer
 
-fitPerfParams(i, j, k, :) = fitPerfParamsList(voxelIndexes, :);
-fitCurves(i, j, k, :) = fitCurvesList(voxelIndexes, :);
+for index = 1:nVoxels
+    fitPerfParams(i(index), j(index), k(index), :) = ...
+        fitPerfParamsList(voxelIndexes(index), :);
+%     fitCurves(i(index), j(index), k(index), :) = ...
+%         fitCurvesList(voxelIndexes(index), :);
+end
 
 %% Save the data
 save(sprintf('fitPerfusionVolume-%s.mat', saveFileSuffix), ...
-    'fitPerfParams', 'fitCurves', 'time');
+    'fitPerfParams', 'time');
 
 end
