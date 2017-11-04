@@ -1,5 +1,5 @@
-function [af, dv, mtt, k1a, k1p, k2, err] = lsFitCurve(curve, times, ...
-    artContrast, pvContrast, tauA, tauP, startingPerfParams)
+function [f, ps, v2, af, v1, t1, tauA, err] = lsFitCurve(curve, times, ...
+    artContrast, pvContrast)
 %lsFitCurve Calculates the best fit curve using lsqcurvefit.
 
 % Input validation
@@ -8,27 +8,22 @@ validateattributes(times, {'numeric'}, ...
     {'column', 'nonempty', 'increasing'});
 validateattributes(artContrast, {'numeric'}, {'column', 'nonempty'});
 validateattributes(pvContrast, {'numeric'}, {'column', 'nonempty'});
-validateattributes(tauA, {'numeric'}, {'scalar'});
-validateattributes(tauP, {'numeric'}, {'scalar'});
-validateattributes(startingPerfParams, {'numeric'}, ...
-    {'vector', 'nonempty'});
 
 opts = optimset('Tolx', 1e-16, 'Tolfun', 1e-10, 'Display', 'off', ...
                 'DiffMinChange', 0.001);
-x0 = startingPerfParams; % af, dv, mtt
-nData = size(times, 1);
-xdata = [times, artContrast, pvContrast, repmat(tauA, nData, 1), ...
-    repmat(tauP, nData, 1)];
+xdata = [artContrast, pvContrast, times];
 ydata = curve; % alias for readability
-lb = [0, 0, 1];
-ub = [1, 1, 100];
-[x, err] = lsqcurvefit(@discLSWrapper, x0, xdata, ydata, lb, ub, opts);
-af = x(1);
-dv = x(2);
-mtt = x(3);
-k1a = af * dv / mtt;
-k1p = (1 - af) * dv / mtt;
-k2 = 1 / mtt;
+x0 = [1.3, 0.5, 0.2, 0.5, 0.2, 0.006]; %f, ps, v2, af, v1, tauA
+lb = [0.167, 0.01, 0.01, 0.01, 0.004, 0];
+ub = [2.5, 1, 0.4, 1, 0.4, 0.010];
+[x, err] = lsqcurvefit(@ditc, x0, xdata, ydata, lb, ub, opts);
+f = x(1);
+ps = x(2);
+v2 = x(3);
+af = x(4);
+v1 = x(5);
+tauA = x(6);
+t1 = v1 / f;
 
 end
 
