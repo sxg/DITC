@@ -1,6 +1,6 @@
 function [fitPerfParams] = fitTimeSeries(timeSeries, mask, times, ...
     artSignal, pvSignal, flipAngle, TR, T10b, T10p, T10l, relaxivity, ...
-    scaleFactor, startFrame, endFrame, saveFileSuffix)
+    scaleFactor, startFrame, addFrames, saveFileSuffix)
 %fitTimeSeries Gets perfusion parameters by least squares curve fitting.
 
 %% Setup
@@ -25,9 +25,9 @@ fitCurvesList = zeros(l * w * d, t);
 
 % Calculate the contrast concentrations
 artContrast = artSignal2contrast(artSignal, pvSignal, flipAngle, TR, ...
-    T10b, relaxivity, startFrame, endFrame);
+    T10b, relaxivity, startFrame, addFrames);
 pvContrast = pvSignal2contrast(pvSignal, flipAngle, TR, T10p, ...
-    relaxivity, startFrame, endFrame); 
+    relaxivity, startFrame, addFrames); 
 
 % Get the linear indexes from the mask
 voxelIndexes = find(mask);
@@ -42,7 +42,7 @@ t = tic; % Start the timer
 parfor index = 1:nVoxels
     voxel = voxelList(index, :);
     contrast = signal2contrast(voxel, flipAngle, TR, T10l, relaxivity, ...
-         scaleFactor, startFrame, endFrame);
+         scaleFactor, startFrame, addFrames);
     [f, ps, v2, af, v1, t1, tauA, ~] = lsFitCurve(contrast', times, ...
         artContrast, pvContrast);
     fitPerfParamsList(index, :) = [f, ps, v2, af, v1, t1, tauA];
