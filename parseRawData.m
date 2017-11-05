@@ -1,4 +1,4 @@
-function [perfParams] = parseRawData(rawData, slice, mask)
+function [perfParams] = parseRawData(rawData, mask)
 %parseRawData Parses the raw data returned from DITC fitting into results.
 
 % Column 1 is mean, column 2 is standard deviation
@@ -6,14 +6,14 @@ nPerfParams = size(rawData, 4);
 perfParams = NaN(nPerfParams, 2);
 
 % Get the perfusion parameter slices
-f = rawData(:, :, slice, 1);
-ps = rawData(:, :, slice, 2);
-v2 = rawData(:, :, slice, 3);
-af = rawData(:, :, slice, 4);
-v1 = rawData(:, :, slice, 5);
-t1 = rawData(:, :, slice, 6);
-e = rawData(:, :, slice, 7);
-tauA = rawData(:, :, slice, 8);
+f = rawData(:, :, 1, 1);
+ps = rawData(:, :, 1, 2);
+v2 = rawData(:, :, 1, 3);
+af = rawData(:, :, 1, 4);
+v1 = rawData(:, :, 1, 5);
+t1 = rawData(:, :, 1, 6);
+e = rawData(:, :, 1, 7);
+tauA = rawData(:, :, 1, 8);
 
 % Get the ROI
 f = f(find(mask));
