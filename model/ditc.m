@@ -11,7 +11,7 @@ af = fitParams(4);
 v1 = fitParams(5);
 t1 = v1 / f;
 tauA = fitParams(6) * 1000;
-% tauP = fitted_params(7); Sourbron 2012 says tauP is negligible
+tauP = fitParams(7) * 1000; % Sourbron 2012 says tauP is negligible
 
 % v1 = F * t1;
 % E = 1 - exp(-PS/F);
@@ -44,13 +44,16 @@ end
 % Then calculate a list of Cin from 1 to length(t)
 cInList = zeros(length(times), 1);
 iTauA = round(tauA / dt);
-% iTauP = round(tauP / dt);
+iTauP = round(tauP / dt);
 for iCIn = 1:length(times)
-    if iCIn - iTauA < 1
-        cInList(iCIn) =  cIn(af, artContrast(iCIn), pvContrast(iCIn));
-    else
+    if iCIn - iTauA > 0 && iCIn - iTauP > 0
+        cInList(iCIn) =  cIn(af, artContrast(iCIn - iTauA), pvContrast(iCIn - iTauP));
+    elseif iCIn - iTauA > 0
         cInList(iCIn) = ...
             cIn(af, artContrast(iCIn - iTauA), pvContrast(iCIn));
+    elseif iCIn - iTauP > 0
+        cInList(iCIn) = ...
+            cIn(af, artContrast(iCIn), pvContrast(iCIn - iTauP));
     end
 end
 

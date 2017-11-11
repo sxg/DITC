@@ -20,8 +20,8 @@ l = size(timeSeries, 1);
 w = size(timeSeries, 2);
 d = size(timeSeries, 3);
 t = size(timeSeries, 4);
-fitPerfParamsList = zeros(l * w * d, 8);
-fitPerfParams = zeros(l, w, d, 8);
+fitPerfParamsList = zeros(l * w * d, 9);
+fitPerfParams = zeros(l, w, d, 9);
 fitCurvesList = zeros(l * w * d, t);
 fitCurves = zeros(l, w, d, t);
 
@@ -46,9 +46,9 @@ parfor index = 1:nVoxels
     voxel = voxelList(index, :);
     contrast = signal2contrast(voxel, flipAngle, TR, T10l, relaxivity, ...
          scaleFactor, startFrame, addFrames);
-    [f, ps, v2, af, v1, t1, e, tauA, ~] = lsFitCurve(contrast', times, ...
+    [f, ps, v2, af, v1, t1, e, tauA, tauP, ~] = lsFitCurve(contrast', times, ...
         artContrast, pvContrast);
-    fitPerfParamsList(index, :) = [f, ps, v2, af, v1, t1, e, tauA];
+    fitPerfParamsList(index, :) = [f, ps, v2, af, v1, t1, e, tauA, tauP];
 %     fitCurvesList(index, :) = normc(ditc([f, ps, v2, af, v1, tauA], ...
 %         [artContrast, pvContrast, times]));
     parfor_progress;
