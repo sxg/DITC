@@ -1,5 +1,5 @@
 function [f, ps, v2, af, v1, t1, e, tauA, tauP, err] = lsFitCurve(curve, times, ...
-    artContrast, pvContrast)
+    artContrast, pvContrast, startFrame)
 %lsFitCurve Calculates the best fit curve using lsqcurvefit.
 
 % Input validation

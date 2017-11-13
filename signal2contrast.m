@@ -2,6 +2,8 @@ function [contrast] = signal2contrast(signal, flipAngle, TR, T10l, ...
     relaxivity, scaleFactor, startFrame, addFrames)
 %cl Contrast concentration for a given signal intensity.
 
+signal = abs(signal);
+
 alpha = flipAngle * pi / 180;
 T10l = T10l * 1000;
 R10l = 1/T10l;
@@ -13,5 +15,6 @@ R1l = abs(log((S0l * sin(alpha) - signal .* cos(alpha)) ...
     ./ (S0l * sin(alpha) - signal)) / TR);
 contrast = (R1l - R10l) * 1e3 / relaxivity;
 contrast = contrast * scaleFactor;
+contrast(1:startFrame) = 0;
 
 end
