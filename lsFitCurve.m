@@ -15,9 +15,9 @@ xdata = [artContrast(startFrame:end), ...
     pvContrast(startFrame:end), ...
     times(startFrame:end)];
 ydata = curve(startFrame:end); % alias for readability
-x0 = [1.3, 0.5, 0.2, 0.5, 0.2, 0.012, 0.00]; %f, ps, v2, af, v1, tauA
-lb = [0.167, 0.01, 0.01, 0.01, 0.004, 0, 0];
-ub = [2.5, 1, 0.4, 1, 0.4, 0.017, 0.005];
+x0 = [1.3, 0.5, 0.2, 0.2, 0.2, 0.004, -0.005]; %f, ps, v2, af, v1, tauA
+lb = [0.167, 0.01, 0.01, 0.01, 0.004, 0, -0.010];
+ub = [2.5, 1, 0.4, 1, 0.4, 0.017, 0.000];
 [x, err] = lsqcurvefit(@ditc, x0, xdata, ydata, lb, ub, opts);
 f = x(1) * 60;
 ps = x(2) * 60;
