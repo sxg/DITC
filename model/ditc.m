@@ -46,12 +46,12 @@ cInList = zeros(length(times), 1);
 iTauA = round(tauA / dt);
 iTauP = round(tauP / dt);
 for iCIn = 1:length(times)
-    if iCIn - iTauA > 0 && iCIn - iTauP > 0
+    if iCIn - iTauA > 0 && iCIn - iTauP > 0 && iCIn - iTauA <= size(artContrast, 1) && iCIn - iTauP <= size(pvContrast, 1)
         cInList(iCIn) =  cIn(af, artContrast(iCIn - iTauA), pvContrast(iCIn - iTauP));
-    elseif iCIn - iTauA > 0
+    elseif iCIn - iTauA > 0 && iCIn - iTauA <= size(artContrast, 1)
         cInList(iCIn) = ...
             cIn(af, artContrast(iCIn - iTauA), pvContrast(iCIn));
-    elseif iCIn - iTauP > 0
+    elseif iCIn - iTauP > 0 && iCIn - iTauP <= size(pvContrast, 1)
         cInList(iCIn) = ...
             cIn(af, artContrast(iCIn), pvContrast(iCIn - iTauP));
     end
